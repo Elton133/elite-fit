@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "path": "../../School"
+    },
+    {
+      "path": ".."
+    },
+    {
+      "path": "../../fetch-filter"
+    }
+  ],
+  "settings": {
+    "liveServer.settings.multiRootWorkspaceName": "elitefit"
+  }
+}

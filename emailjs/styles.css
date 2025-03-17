@@ -1,0 +1,87 @@
+body {
+  font-family: "Fredoka", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f9f9f9;
+}
+
+/* Centered card */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 400px;
+
+  text-align: center;
+}
+
+.card h2 {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.card p {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.social-icons span {
+  width: 35px;
+  height: 35px;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+input,
+textarea {
+  font-family: "Fredoka", sans-serif;
+  width: 320px;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+button {
+  width: 200px;
+  padding: 12px;
+  background-color: #1b7be0;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-family: "Fredoka", sans-serif;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0a80f5;
+}
+
+.footer {
+  margin-top: 15px;
+  font-size: 12px;
+  color: #777;
+}
+
+.footer a {
+  text-decoration: none;
+  color: #0056b3;
+}

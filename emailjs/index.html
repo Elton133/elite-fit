@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Email with EmailJS</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>Subscribe to My Newsletter</h2>
+        <p>Get the latest insights and updates delivered straight to your inbox with emailjs.</p>
+
+
+
+        <form id="emailForm">
+            <input type="text" id="to_name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <button type="submit">Send Email</button>
+        </form>
+
+        <div class="footer">
+            <a href="#">Terms</a> · <a href="#">Privacy</a> · <a href="#">Help</a>
+        </div>
+    </div>
+
+</body>
+<script>
+    (function () {
+        emailjs.init("hFVsIFEYcNxuwHdM1");
+    })();
+
+    document.getElementById("emailForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        emailjs.send("service_2drbdtz", "template_sox1sco", {
+            to_name: document.getElementById("to_name").value,
+            email: document.getElementById("email").value,
+        }).then(function (response) {
+            alert("Email sent successfully!");
+        }, function (error) {
+            alert("Failed to send email: " + JSON.stringify(error));
+        });
+    });
+</script>
+
+</html>
