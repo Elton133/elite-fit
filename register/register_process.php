@@ -1,21 +1,35 @@
 <?php
 include_once "../datacon.php";
 
+// a superglobal that has a request method post, and anything received from the frontend is cleaned 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     function clean_input($data) {
         return htmlspecialchars(stripslashes(trim($data)));
     }
 
-    function generate_strong_password($length = 12) {
-        $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+';
-        return substr(str_shuffle(str_repeat($chars, ceil($length / strlen($chars)))), 0, $length);
-    }
+    // using random_int(), which is better and more secure as opposed to shuffle
+//    function generate_password($length = 12) {
+//     $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+';
+//     $password = '';
+
+//     for ($i = 0; $i < $length; $i++) {
+//         $password .= $chars[random_int(0, strlen($chars) - 1)];
+//     }
+
+//     return $password;
+// }
+
+    // function generate_strong_password($length = 12) {
+    //     $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+';
+    //     return substr(str_shuffle(str_repeat($chars, ceil($length / strlen($chars)))), 0, $length);
+    // }
 
     // User Registration Details
     $first_name = clean_input($_POST["first_name"]);
     $last_name = clean_input($_POST["last_name"]);
     $contact_number = clean_input($_POST["contact_number"]);
     $email = clean_input($_POST["email"]);
+    $user_password = clean_input($_POST["user_password"]);
     $location = clean_input($_POST["location"]);
     $gender = clean_input($_POST["gender"]);
     $date_of_birth = clean_input($_POST["date_of_birth"]);
@@ -74,8 +88,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    $register_query = "INSERT INTO user_register_details (first_name, last_name, contact_number, email, location, gender, date_of_birth, profile_picture)
-        VALUES ('$first_name', '$last_name', '$contact_number', '$email', '$location', '$gender', '$dob', '$target_file')";
+    $register_query = "INSERT INTO user_register_details (first_name, last_name, contact_number, email, user_password,location, gender, date_of_birth, profile_picture)
+        VALUES ('$first_name', '$last_name', '$contact_number', '$email', '$user_password', '$location', '$gender', '$dob', '$target_file')";
 
     if (!mysqli_query($conn, $register_query)) {
         echo "<script>alert('Error registering user: " . mysqli_error($conn) . "'); window.history.back();</script>";
@@ -92,11 +106,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Generate strong password
-    $raw_password = generate_strong_password();
-    $hashed_password = password_hash($raw_password, PASSWORD_BCRYPT);
+    // $login_query = "INSERT INTO user_login_details (username, user_password) VALUES ('$email', '$user_password')";
 
-    $_SESSION["temp_password"] = $raw_password;
+    // if (!mysqli_query($conn, $login_query)) {
+    //     echo "<script>alert('Error storing login credentials: " . mysqli_error($conn) . "'); window.history.back();</script>";
+    //     exit();
+    // }
+
+
+
+    $hashed_password = password_hash($user_password, PASSWORD_BCRYPT);
+
+
 
     $login_query = "INSERT INTO user_login_details (username, user_password) VALUES ('$email', '$hashed_password')";
    
@@ -104,7 +125,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<script>alert('Error creating login credentials: " . mysqli_error($conn) . "'); window.history.back();</script>";
         exit();
     }
+    echo "<script>alert('Registration successful! '); window.location.href='../login';</script>";
 
-    echo "<script>alert('Registration successful! Your password is: $raw_password'); window.location.href='../login';</script>";
+   
 }
 ?>

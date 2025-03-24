@@ -29,6 +29,8 @@ if (isset($_GET['registered']) && $_GET['registered'] == 1) {
     <link rel="stylesheet" href="login-styles.css">
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
     <div class="background"></div>
@@ -42,18 +44,41 @@ if (isset($_GET['registered']) && $_GET['registered'] == 1) {
         </div>
 
         <?php if (!empty($error_message)): ?>
-        <div class="alert alert-error">
-            <i class="fas fa-exclamation-circle"></i>
-            <?php echo $error_message; ?>
-        </div>
-        <?php endif; ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Toastify({
+                text: "<?php echo addslashes($error_message); ?>",
+                duration: 3000,
+                gravity: "top", // `top` or `bottom`
+                position: "right", // `left`, `center` or `right`
+                stopOnFocus: true,
+                close: true,
+                style: {
+                    background: "linear-gradient(to right, #ff4b2b, #ff416c)",
+                }
+            }).showToast();
+        });
+    </script>
+<?php endif; ?>
 
-        <?php if (!empty($success_message)): ?>
-        <div class="alert alert-success">
-            <i class="fas fa-check-circle"></i>
-            <?php echo $success_message; ?>
-        </div>
-        <?php endif; ?>
+<?php if (!empty($success_message)): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Toastify({
+                text: "<?php echo addslashes($success_message); ?>",
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                stopOnFocus: true,
+                close: true,
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                }
+            }).showToast();
+        });
+    </script>
+<?php endif; ?>
+
 
         <form action="login_process.php" method="POST">
             <div class="form-section">
@@ -113,7 +138,9 @@ if (isset($_GET['registered']) && $_GET['registered'] == 1) {
         </div>
     </div>
 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
+        
         // Toggle password visibility
         document.getElementById('togglePassword').addEventListener('click', function() {
             const passwordInput = document.getElementById('password');

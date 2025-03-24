@@ -44,26 +44,22 @@ body {
 }
 
 .logo-container {
+  width: 70px;
+  height: 70px;
+  background: rgba(30, 60, 114, 0.9);
+  border-radius: 50%;
   display: flex;
   align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.logo {
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
+.logo-image {
+  width: 35px;
+  height: 35px;
   filter: brightness(0) invert(1);
-}
-
-.logo-container h1 {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.logo-container span {
-  color: #1e3c72;
-  font-weight: 600;
 }
 
 .user-menu {
@@ -688,5 +684,39 @@ body {
 
   .user-info {
     display: none;
+  }
+}
+
+/* Add these styles to your existing welcome-styles.css file */
+
+/* Mobile toggle button for sidebar */
+.mobile-toggle {
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-right: 15px;
+}
+
+/* Adjust header for sidebar */
+.main-header {
+  padding: 15px 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mobile-toggle {
+    display: block;
+  }
+
+  .logo-container h1 {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-row {
+    flex-direction: column;
+  }
+
+  .dashboard-card {
+    width: 100%;
+    margin-bottom: 20px;
   }
 }

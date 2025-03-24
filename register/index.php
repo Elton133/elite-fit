@@ -2,7 +2,7 @@
 include_once "../datacon.php";
 
 // Fetch workout plans
-// slect the table_id and workout_name from the workout_plan table
+// select the table_id and workout_name from the workout_plan table
 $workout_query = "SELECT table_id, workout_name FROM workout_plan";
 // mysqli_query is a function in php that takes two parameters
 // the first parameter is the connection to the database
@@ -20,6 +20,8 @@ $result = mysqli_query($conn, $workout_query);
     <link rel="stylesheet" href="styles.css">
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
     <div class="background"></div>
@@ -32,7 +34,7 @@ $result = mysqli_query($conn, $workout_query);
             <p class="form-subtitle">Join our fitness community today</p>
         </div>
 
-        <!-- every form must have an action attribute -->
+        <!-- every form must have an action attribute, which is where the form data is sent and register logic -->
         <!-- and register_process.php is where my backend code is located -->
         <!-- method attribute is set to POST, tells what data is being sent -->
         <!-- enctype attribute is set to multipart/form-data, which means there's some form of media -->
@@ -42,6 +44,8 @@ $result = mysqli_query($conn, $workout_query);
                 <div class="step-indicator active" data-step="1"></div>
                 <div class="progress-line"></div>
                 <div class="step-indicator" data-step="2"></div>
+                <div class="progress-line"></div>
+                <div class="step-indicator" data-step="3"></div>
             </div>
             
             <!-- User Registration Details -->
@@ -235,41 +239,119 @@ $result = mysqli_query($conn, $workout_query);
                 </div>
             </div>
 
-            <div class="btn-container">
-                <button type="button" id="prevBtn" class="hidden" onclick="showSection(1)">
-                    <i class="fas fa-arrow-left"></i> Previous
-                </button>
-                <button type="button" id="nextBtn" onclick="showSection(2)">
-                    Next <i class="fas fa-arrow-right"></i>
-                </button>
-                <button type="submit" id="submitBtn" class="hidden">
-                    <i class="fas fa-check"></i> Submit
-                </button>
+            <div id="section3" class="form-section hidden">
+            <h3>CreatePassword </h3>
+                
+            <div class="form-group">
+                    <label>Password:</label>
+                    <div class="input-with-icon password-input-container">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="user_password" id="password" placeholder="Create your password" required>
+                        <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                    </div>
+                </div>
+                
             </div>
+
+            <div class="btn-container">
+    <!-- Previous button (hidden by default) -->
+    <button type="button" id="prevBtn" class="hidden" onclick="prevSection()">
+        <i class="fas fa-arrow-left"></i> Previous
+    </button>
+    
+    <!-- Next button -->
+    <button type="button" id="nextBtn" onclick="nextSection()">
+        Next <i class="fas fa-arrow-right"></i>
+    </button>
+    
+    <!-- Submit button (hidden by default) -->
+    <button type="submit" id="submitBtn" class="hidden">
+        <i class="fas fa-check"></i> Submit
+    </button>
+</div>
+        <div class="link-to-login" id="link-to-login">Already have an account? <a href="../login/index.php">Sign in</a></div>
         </form>
     </div>
 
     <script>
-        function showSection(sectionNum) {
-            if (sectionNum === 1) {
-                document.getElementById('section1').classList.remove('hidden');
-                document.getElementById('section2').classList.add('hidden');
-                document.getElementById('prevBtn').classList.add('hidden');
-                document.getElementById('nextBtn').classList.remove('hidden');
-                document.getElementById('submitBtn').classList.add('hidden');
-                document.querySelector('.step-indicator[data-step="1"]').classList.add('active');
-                document.querySelector('.step-indicator[data-step="2"]').classList.remove('active');
-            } else {
-                document.getElementById('section1').classList.add('hidden');
-                document.getElementById('section2').classList.remove('hidden');
-                document.getElementById('prevBtn').classList.remove('hidden');
-                document.getElementById('nextBtn').classList.add('hidden');
-                document.getElementById('submitBtn').classList.remove('hidden');
-                document.querySelector('.step-indicator[data-step="1"]').classList.add('completed');
-                document.querySelector('.step-indicator[data-step="2"]').classList.add('active');
-            }
-        }
 
+
+document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // Track current section
+let currentSection = 1;
+
+function nextSection() {
+    if (currentSection < 3) {
+        currentSection++;
+        showSection(currentSection);
+    }
+}
+
+function prevSection() {
+    if (currentSection > 1) {
+        currentSection--;
+        showSection(currentSection);
+    }
+}
+       function showSection(sectionNum) {
+    // Hide all sections first
+    document.getElementById('section1').classList.add('hidden');
+    document.getElementById('section2').classList.add('hidden');
+    document.getElementById('section3').classList.add('hidden');
+    
+    // Hide all buttons first
+    document.getElementById('prevBtn').classList.add('hidden');
+    document.getElementById('nextBtn').classList.add('hidden');
+    document.getElementById('submitBtn').classList.add('hidden');
+    document.getElementById('link-to-login').classList.add('hidden');
+    
+    if (sectionNum === 1) {
+        // Show section 1
+        document.getElementById('section1').classList.remove('hidden');
+        
+        // Section 1: Only show Next button
+        document.getElementById('nextBtn').classList.remove('hidden');
+        document.getElementById('link-to-login').classList.remove('hidden');
+        
+        // Update step indicators
+        document.querySelector('.step-indicator[data-step="1"]').classList.add('active');
+        document.querySelector('.step-indicator[data-step="2"]').classList.remove('active');
+        document.querySelector('.step-indicator[data-step="3"]').classList.remove('active');
+    } 
+    else if (sectionNum === 2) {
+        // Show section 2
+        document.getElementById('section2').classList.remove('hidden');
+        
+        // Section 2: Show both Previous and Next buttons
+        document.getElementById('prevBtn').classList.remove('hidden');
+        document.getElementById('nextBtn').classList.remove('hidden');
+        
+        // Update step indicators
+        document.querySelector('.step-indicator[data-step="1"]').classList.add('completed');
+        document.querySelector('.step-indicator[data-step="2"]').classList.add('active');
+        document.querySelector('.step-indicator[data-step="3"]').classList.remove('active');
+    }
+    else if (sectionNum === 3) {
+        // Show section 3
+        document.getElementById('section3').classList.remove('hidden');
+        
+        // Section 3: Show Previous and Submit buttons
+        document.getElementById('prevBtn').classList.remove('hidden');
+        document.getElementById('submitBtn').classList.remove('hidden');
+        
+        // Update step indicators
+        document.querySelector('.step-indicator[data-step="1"]').classList.add('completed');
+        document.querySelector('.step-indicator[data-step="2"]').classList.add('completed');
+        document.querySelector('.step-indicator[data-step="3"]').classList.add('active');
+    }
+}
         // File input label update
         document.getElementById('profile_picture').addEventListener('change', function() {
             const fileName = this.files[0]?.name || 'Choose a file';

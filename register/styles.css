@@ -379,7 +379,37 @@ button i:last-child {
 #submitBtn:hover {
   background: rgba(40, 167, 69, 1);
 }
+.password-input-container {
+  position: relative;
+}
 
+.link-to-login {
+  text-align: center;
+  margin-top: 20px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+}
+
+.link-to-login a {
+  color: #fff;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.toggle-password {
+  position: absolute !important;
+  right: 15px !important;
+  left: auto !important;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: rgba(30, 60, 114, 0.6) !important;
+  transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+  color: rgba(30, 60, 114, 0.9) !important;
+}
 /* Responsive Adjustments */
 @media (max-width: 576px) {
   .form-container {
