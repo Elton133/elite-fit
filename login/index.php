@@ -44,7 +44,21 @@ if (isset($_GET['registered']) && $_GET['registered'] == 1) {
         </div>
 
         <?php if (!empty($error_message)): ?>
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Toastify({
+                text: "<?php echo addslashes($error_message); ?>",
+                duration: 3000,
+                gravity: "top", // `top` or `bottom`
+                position: "right", // `left`, `center` or `right`
+                stopOnFocus: true,
+                close: true,
+                style: {
+                    background: "linear-gradient(to right, #ff4b2b, #ff416c)",
+                }
+            }).showToast();
+        });
+    </script>
 <?php endif; ?>
 
 <?php if (!empty($success_message)): ?>
@@ -105,7 +119,20 @@ if (isset($_GET['registered']) && $_GET['registered'] == 1) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-   
+    <script>
+const msg = localStorage.getItem('toastMessage');
+if (msg) {
+  Toastify({
+    text: msg,
+    duration: 5000,
+    gravity: "top",
+    position: "center",
+    backgroundColor: "#dc3545",
+    close: true
+  }).showToast();
+  localStorage.removeItem('toastMessage');
+}
+</script>
 
 
     <script>

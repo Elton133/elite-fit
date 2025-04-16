@@ -48,14 +48,24 @@ echo "<script>
        window.location.href='../admin/admin_dashboard.php';
    }, 100);
 </script>";
-
-                    // header("Location: ../admin/admin_dashboard.php");
                     break;
                 case 'trainer':
-                    header("Location: ../trainer/trainer-dashboard.php");
+                    $message = "Login successful";
+                echo "<script>
+                   localStorage.setItem('toastMessage', '$message');
+                   setTimeout(function() {
+                       window.location.href='../trainer/trainer-dashboard.php';
+                   }, 100);
+                </script>";
                     break;
                 case 'equipment_manager':
-                    header("Location: ../equipment/manager-dashboard.php");
+                    $message = "Login successful";
+                echo "<script>
+                   localStorage.setItem('toastMessage', '$message');
+                   setTimeout(function() {
+                       window.location.href='../equipment/manager-dashboard.php';
+                   }, 100);
+                </script>";
                     break;
                 case 'user':
                 default:
@@ -70,11 +80,21 @@ echo "<script>
             }
             exit();
         } else {
-            echo "<script>alert('Invalid details'); window.location.href='../login/index.php';</script>";
+           $message = "Invalid details";
+        echo "<script>
+            localStorage.setItem('toastMessage', '$message');
+            localStorage.setItem('toastType', 'error');
+            window.location.href = '../login/index.php';
+        </script>";
             exit();
         }
     } else {
-        echo "<script>alert('User not found'); window.location.href='../login/index.php';</script>";
+        $message = "User not found";
+        echo "<script>
+            localStorage.setItem('toastMessage', '$message');
+            localStorage.setItem('toastType', 'error');
+            window.location.href = '../login/index.php';
+        </script>";
         exit();
     }
 } else {

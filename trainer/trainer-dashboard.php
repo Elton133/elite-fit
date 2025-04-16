@@ -1,103 +1,103 @@
 <?php
-session_start();
-require_once('../datacon.php');
+    session_start();
+    require_once('../datacon.php');
 
-// Redirect if session variables are not set or user is not a trainer
-// if (!isset($_SESSION['email']) || !isset($_SESSION['table_id']) || $_SESSION['role'] !== 'trainer') {
-//     header("Location: ../login/index.php");
-//     exit();
-// }
+    // Redirect if session variables are not set or user is not a trainer
+    // if (!isset($_SESSION['email']) || !isset($_SESSION['table_id']) || $_SESSION['role'] !== 'trainer') {
+    //     header("Location: ../login/index.php");
+    //     exit();
+    // }
 
-$email = $_SESSION['email'];
-$table_id = $_SESSION['table_id'];
+    $email = $_SESSION['email'];
+    $table_id = $_SESSION['table_id'];
 
-// Fetch trainer data
-$sql_trainer = "SELECT table_id, first_name, last_name, profile_picture FROM user_register_details WHERE email = ? AND role = 'trainer'";
-$stmt_trainer = $conn->prepare($sql_trainer);
-$stmt_trainer->bind_param("s", $email);
-$stmt_trainer->execute();
-$result_trainer = $stmt_trainer->get_result();
-$trainer_data = $result_trainer->fetch_assoc();
-$stmt_trainer->close();
+    // Fetch trainer data
+    $sql_trainer = "SELECT table_id, first_name, last_name, profile_picture FROM user_register_details WHERE email = ? AND role = 'trainer'";
+    $stmt_trainer = $conn->prepare($sql_trainer);
+    $stmt_trainer->bind_param("s", $email);
+    $stmt_trainer->execute();
+    $result_trainer = $stmt_trainer->get_result();
+    $trainer_data = $result_trainer->fetch_assoc();
+    $stmt_trainer->close();
 
-// Handle profile picture
-$profile_pic = "../register/uploads/default-avatar.jpg"; 
-if (!empty($trainer_data['profile_picture']) && file_exists("../register/uploads/" . $trainer_data['profile_picture'])) {
-    $profile_pic = "../register/uploads/" . $trainer_data['profile_picture'];
-}
+    // Handle profile picture
+    $profile_pic = "../register/uploads/default-avatar.jpg"; 
+    if (!empty($trainer_data['profile_picture']) && file_exists("../register/uploads/" . $trainer_data['profile_picture'])) {
+        $profile_pic = "../register/uploads/" . $trainer_data['profile_picture'];
+    }
 
-// Fetch pending workout plan requests
-$sql_pending = "SELECT wr.request_id, wr.user_id, wr.request_date, wr.status, 
-                u.first_name, u.last_name, u.profile_picture,
-                ufd.fitness_goal_1, ufd.fitness_goal_2, ufd.fitness_goal_3, ufd.experience_level
-                FROM workout_requests wr
-                JOIN user_register_details u ON wr.user_id = u.table_id
-                JOIN user_fitness_details ufd ON wr.user_id = ufd.table_id
-                WHERE wr.trainer_id = ? AND wr.status = 'pending'
-                ORDER BY wr.request_date DESC
+    // Fetch pending workout plan requests
+    $sql_pending = "SELECT wr.request_id, wr.user_id, wr.request_date, wr.status, 
+                    u.first_name, u.last_name, u.profile_picture,
+                    ufd.fitness_goal_1, ufd.fitness_goal_2, ufd.fitness_goal_3, ufd.experience_level
+                    FROM workout_requests wr
+                    JOIN user_register_details u ON wr.user_id = u.table_id
+                    JOIN user_fitness_details ufd ON wr.user_id = ufd.table_id
+                    WHERE wr.trainer_id = ? AND wr.status = 'pending'
+                    ORDER BY wr.request_date DESC
+                    LIMIT 5";
+    $stmt_pending = $conn->prepare($sql_pending);
+    $stmt_pending->bind_param("i", $trainer_data['table_id']);
+    $stmt_pending->execute();
+    $result_pending = $stmt_pending->get_result();
+    $pending_requests = [];
+    while ($row = $result_pending->fetch_assoc()) {
+        $pending_requests[] = $row;
+    }
+    $stmt_pending->close();
+
+    // Fetch active clients
+    $sql_active = "SELECT u.table_id, u.first_name, u.last_name, u.profile_picture,
+                wp.plan_id, wp.plan_name, wp.start_date, wp.end_date, wp.last_updated
+                FROM workout_plans wp
+                JOIN user_register_details u ON wp.user_id = u.table_id
+                WHERE wp.trainer_id = ? AND wp.status = 'active'
+                ORDER BY wp.last_updated DESC
                 LIMIT 5";
-$stmt_pending = $conn->prepare($sql_pending);
-$stmt_pending->bind_param("i", $trainer_data['table_id']);
-$stmt_pending->execute();
-$result_pending = $stmt_pending->get_result();
-$pending_requests = [];
-while ($row = $result_pending->fetch_assoc()) {
-    $pending_requests[] = $row;
-}
-$stmt_pending->close();
+    $stmt_active = $conn->prepare($sql_active);
+    $stmt_active->bind_param("i", $trainer_data['table_id']);
+    $stmt_active->execute();
+    $result_active = $stmt_active->get_result();
+    $active_clients = [];
+    while ($row = $result_active->fetch_assoc()) {
+        $active_clients[] = $row;
+    }
+    $stmt_active->close();
 
-// Fetch active clients
-$sql_active = "SELECT u.table_id, u.first_name, u.last_name, u.profile_picture,
-               wp.plan_id, wp.plan_name, wp.start_date, wp.end_date, wp.last_updated
-               FROM workout_plans wp
-               JOIN user_register_details u ON wp.user_id = u.table_id
-               WHERE wp.trainer_id = ? AND wp.status = 'active'
-               ORDER BY wp.last_updated DESC
-               LIMIT 5";
-$stmt_active = $conn->prepare($sql_active);
-$stmt_active->bind_param("i", $trainer_data['table_id']);
-$stmt_active->execute();
-$result_active = $stmt_active->get_result();
-$active_clients = [];
-while ($row = $result_active->fetch_assoc()) {
-    $active_clients[] = $row;
-}
-$stmt_active->close();
+    // Fetch trainer stats
+    $sql_stats = "SELECT 
+                (SELECT COUNT(*) FROM workout_plans WHERE trainer_id = ? AND status = 'active') as active_plans,
+                (SELECT COUNT(*) FROM workout_requests WHERE trainer_id = ? AND status = 'pending') as pending_requests,
+                (SELECT COUNT(DISTINCT user_id) FROM workout_plans WHERE trainer_id = ?) as total_clients,
+                (SELECT COUNT(*) FROM trainer_reviews WHERE trainer_id = ?) as total_reviews";
+    $stmt_stats = $conn->prepare($sql_stats);
+    $stmt_stats->bind_param("iiii", $trainer_data['table_id'], $trainer_data['table_id'], $trainer_data['table_id'], $trainer_data['table_id']);
+    $stmt_stats->execute();
+    $trainer_stats = $stmt_stats->get_result()->fetch_assoc();
+    $stmt_stats->close();
 
-// Fetch trainer stats
-$sql_stats = "SELECT 
-              (SELECT COUNT(*) FROM workout_plans WHERE trainer_id = ? AND status = 'active') as active_plans,
-              (SELECT COUNT(*) FROM workout_requests WHERE trainer_id = ? AND status = 'pending') as pending_requests,
-              (SELECT COUNT(DISTINCT user_id) FROM workout_plans WHERE trainer_id = ?) as total_clients,
-              (SELECT COUNT(*) FROM trainer_reviews WHERE trainer_id = ?) as total_reviews";
-$stmt_stats = $conn->prepare($sql_stats);
-$stmt_stats->bind_param("iiii", $trainer_data['table_id'], $trainer_data['table_id'], $trainer_data['table_id'], $trainer_data['table_id']);
-$stmt_stats->execute();
-$trainer_stats = $stmt_stats->get_result()->fetch_assoc();
-$stmt_stats->close();
+    // Calculate average rating
+    $sql_rating = "SELECT AVG(rating) as avg_rating FROM trainer_reviews WHERE trainer_id = ?";
+    $stmt_rating = $conn->prepare($sql_rating);
+    $stmt_rating->bind_param("i", $trainer_data['table_id']);
+    $stmt_rating->execute();
+    $avg_rating = $stmt_rating->get_result()->fetch_assoc()['avg_rating'] ?? 0;
+    $avg_rating = number_format($avg_rating, 1);
+    $stmt_rating->close();
 
-// Calculate average rating
-$sql_rating = "SELECT AVG(rating) as avg_rating FROM trainer_reviews WHERE trainer_id = ?";
-$stmt_rating = $conn->prepare($sql_rating);
-$stmt_rating->bind_param("i", $trainer_data['table_id']);
-$stmt_rating->execute();
-$avg_rating = $stmt_rating->get_result()->fetch_assoc()['avg_rating'] ?? 0;
-$avg_rating = number_format($avg_rating, 1);
-$stmt_rating->close();
+    // greeting
+    $hour = date("H");
 
-// greeting
-$hour = date("H");
-
-// Determine the time of day
-if ($hour >= 5 && $hour < 12) {
-    $greeting = "Good morning";
-} elseif ($hour >= 12 && $hour < 17) {
-    $greeting = "Good afternoon";
-} elseif ($hour >= 17 && $hour < 21) {
-    $greeting = "Good evening";
-} else {
-    $greeting = "Good night";
-}
+    // Determine the time of day
+    if ($hour >= 5 && $hour < 12) {
+        $greeting = "Good morning";
+    } elseif ($hour >= 12 && $hour < 17) {
+        $greeting = "Good afternoon";
+    } elseif ($hour >= 17 && $hour < 21) {
+        $greeting = "Good evening";
+    } else {
+        $greeting = "Good night";
+    }
 ?>
 
 <!DOCTYPE html>
@@ -108,6 +108,7 @@ if ($hour >= 5 && $hour < 12) {
     <title>Trainer Dashboard - EliteFit Gym</title>
     <link rel="stylesheet" href="../welcome/welcome-styles.css">
     <link rel="stylesheet" href="sidebar-styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -372,6 +373,7 @@ if ($hour >= 5 && $hour < 12) {
     </div>
     
     <script src="sidebar-script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
         const backgrounds = [
             'url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1470&q=80")',
@@ -406,6 +408,18 @@ if ($hour >= 5 && $hour < 12) {
                 });
             }
         });
+        const msg = localStorage.getItem('toastMessage');
+        if (msg) {
+          Toastify({
+            text: msg,
+            duration: 5000,
+            gravity: "top",
+            position: "center",
+            backgroundColor: "#28a745",
+            close: true
+          }).showToast();
+          localStorage.removeItem('toastMessage');
+        }
     </script>
 </body>
 </html>
