@@ -1,92 +1,92 @@
 <?php
-session_start();
-require_once('../datacon.php');
+    session_start();
+    require_once('../datacon.php');
 
-// Redirect if session variables are not set
-if (!isset($_SESSION['email']) || !isset($_SESSION['table_id'])) {
-    header("Location: login.php");
-    exit();
-}
+    // Redirect if session variables are not set
+    if (!isset($_SESSION['email']) || !isset($_SESSION['table_id'])) {
+        header("Location: login.php");
+        exit();
+    }
 
-$email = $_SESSION['email'];
-$table_id = $_SESSION['table_id'];
+    $email = $_SESSION['email'];
+    $table_id = $_SESSION['table_id'];
 
-// Fetch user data
-$sql_user = "SELECT table_id, first_name, last_name, profile_picture FROM user_register_details WHERE email = ?";
-$stmt_user = $conn->prepare($sql_user);
-$stmt_user->bind_param("s", $email);
-$stmt_user->execute();
-$result_user = $stmt_user->get_result();
-$user_data = $result_user->fetch_assoc();
-$stmt_user->close();
+    // Fetch user data
+    $sql_user = "SELECT table_id, first_name, last_name, profile_picture FROM user_register_details WHERE email = ?";
+    $stmt_user = $conn->prepare($sql_user);
+    $stmt_user->bind_param("s", $email);
+    $stmt_user->execute();
+    $result_user = $stmt_user->get_result();
+    $user_data = $result_user->fetch_assoc();
+    $stmt_user->close();
 
-// Fetch fitness data
-$sql_fitness = "SELECT user_weight, user_height, user_bodytype,fitness_goal_1,fitness_goal_2,fitness_goal_3,experience_level, health_condition, health_condition_desc FROM user_fitness_details WHERE table_id = ?";
-$stmt_fitness = $conn->prepare($sql_fitness);
-$stmt_fitness->bind_param("i", $user_data['table_id']);
-$stmt_fitness->execute();
-$result_fitness = $stmt_fitness->get_result();
-$fitness_data = $result_fitness->fetch_assoc();
-$stmt_fitness->close();
+    // Fetch fitness data
+    $sql_fitness = "SELECT user_weight, user_height, user_bodytype,fitness_goal_1,fitness_goal_2,fitness_goal_3,experience_level, health_condition, health_condition_desc FROM user_fitness_details WHERE table_id = ?";
+    $stmt_fitness = $conn->prepare($sql_fitness);
+    $stmt_fitness->bind_param("i", $user_data['table_id']);
+    $stmt_fitness->execute();
+    $result_fitness = $stmt_fitness->get_result();
+    $fitness_data = $result_fitness->fetch_assoc();
+    $stmt_fitness->close();
 
-$sql = "SELECT wp.workout_name 
-        FROM user_fitness_details ufd
-        JOIN workout_plan wp ON wp.table_id IN (ufd.preferred_workout_routine_1, 
-                                                ufd.preferred_workout_routine_2, 
-                                                ufd.preferred_workout_routine_3)
-        WHERE ufd.table_id = ?"; // Using prepared statements for security
+    $sql = "SELECT wp.workout_name 
+            FROM user_fitness_details ufd
+            JOIN workout_plan wp ON wp.table_id IN (ufd.preferred_workout_routine_1, 
+                                                    ufd.preferred_workout_routine_2, 
+                                                    ufd.preferred_workout_routine_3)
+            WHERE ufd.table_id = ?";
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-$workout_preferences = [];
-while ($row = $result->fetch_assoc()) {
-    $workout_preferences[] = $row['workout_name'];
-}
+    $workout_preferences = [];
+    while ($row = $result->fetch_assoc()) {
+        $workout_preferences[] = $row['workout_name'];
+    }
 
 
-// Calculate BMI
-$bmi = null;
-$bmi_category = "";
-if (!empty($fitness_data['user_weight']) && !empty($fitness_data['user_height']) && 
-    is_numeric($fitness_data['user_height']) && is_numeric($fitness_data['user_weight']) && 
-    $fitness_data['user_height'] > 0 && $fitness_data['user_weight'] > 0) {
-    
-    $weight_kg = $fitness_data['user_weight'];
-    $height_m = $fitness_data['user_height'] / 100; // Convert cm to m
-    $bmi = $weight_kg / ($height_m * $height_m);
-    
-    // Determine BMI category
-    $bmi_category = ($bmi < 18.5) ? "Underweight" :
-                    (($bmi < 25) ? "Normal weight" :
-                    (($bmi < 30) ? "Overweight" : "Obese"));
-}
+    // Calculate BMI
+    $bmi = null;
+    $bmi_category = "";
+    if (!empty($fitness_data['user_weight']) && !empty($fitness_data['user_height']) && 
+        is_numeric($fitness_data['user_height']) && is_numeric($fitness_data['user_weight']) && 
+        $fitness_data['user_height'] > 0 && $fitness_data['user_weight'] > 0) {
+        
+        $weight_kg = $fitness_data['user_weight'];
+        $height_m = $fitness_data['user_height'] / 100; // Convert cm to m
+        $bmi = $weight_kg / ($height_m * $height_m);
+        
+        // Determine BMI category
+        $bmi_category = ($bmi < 18.5) ? "Underweight" :
+                        (($bmi < 25) ? "Normal weight" :
+                        (($bmi < 30) ? "Overweight" : "Obese"));
+    }
 
-// Handle profile picture
-$profile_pic = "../register/uploads/default-avatar.jpg"; 
-if (!empty($user_data['profile_picture']) && file_exists("../register/uploads/" . $user_data['profile_picture'])) {
-    $profile_pic = "../register/uploads/" . $user_data['profile_picture'];
-}
+    // Handle profile picture
+    $profile_pic = "../register/uploads/default-avatar.jpg"; 
+    if (!empty($user_data['profile_picture']) && file_exists("../register/uploads/" . $user_data['profile_picture'])) {
+        $profile_pic = "../register/uploads/" . $user_data['profile_picture'];
+    }
 
-// Initialize empty arrays for goals and preferences
-$fitness_goals = [];
-$workout_preferences = [];
+    // Initialize empty arrays for goals and preferences
+    $fitness_goals = [];
+    $workout_preferences = [];
 
-// greeting
-$hour = date("H");
+    // greeting
+    $hour = date("H");
 
-// Determine the time of day
-if ($hour >= 5 && $hour < 12) {
-    $greeting = "Good morning";
-} elseif ($hour >= 12 && $hour < 17) {
-    $greeting = "Good afternoon";
-} elseif ($hour >= 17 && $hour < 21) {
-    $greeting = "Good evening";
-} else {
-    $greeting = "Good night";
-}
+    // Determine the time of day
+    if ($hour >= 5 && $hour < 12) {
+        $greeting = "Good morning";
+    } elseif ($hour >= 12 && $hour < 17) {
+        $greeting = "Good afternoon";
+    } elseif ($hour >= 17 && $hour < 21) {
+        $greeting = "Good evening";
+    } else {
+        $greeting = "Good night";
+    }
 ?>
 
 <!DOCTYPE html>
@@ -97,6 +97,7 @@ if ($hour >= 5 && $hour < 12) {
     <title>Welcome to EliteFit Gym</title>
     <link rel="stylesheet" href="welcome-styles.css">
     <link rel="stylesheet" href="sidebar-styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -120,22 +121,22 @@ if ($hour >= 5 && $hour < 12) {
             <div class="user-menu">
                 <div class="notifications">
                     <i class="fas fa-bell"></i>
-                    <span class="notification-badge">3</span>
+                    <span class="notification-badge">5</span>
                 </div>
                 <div class="user-profile">
                     <div class="user-avatar">
-                        <img src="<?php echo htmlspecialchars($profile_pic); ?>" alt="Profile Picture">
+                        <img src="<?php echo htmlspecialchars($profile_pic); ?>" alt="Admin Profile Picture">
                     </div>
                     <div class="user-info">
-                        <h><?= htmlspecialchars($user_data['first_name'] . ' ' . $user_data['last_name']) ?></h>
-                        <p class="user-status">Experience Level: <?php echo htmlspecialchars($fitness_data['experience_level'] ?? 'Member'); ?></p>
+                        <!-- <h3><?= htmlspecialchars($admin_data['first_name'] ?? 'Admin') . ' ' . htmlspecialchars($admin_data['last_name'] ?? '') ?></h3> -->
+                        <p class="user-status">Member</p>
                     </div>
                     <div class="dropdown-menu">
                         <i class="fas fa-chevron-down"></i>
                         <div class="dropdown-content">
                             <a href="#"><i class="fas fa-user-circle"></i> Profile</a>
                             <a href="#"><i class="fas fa-cog"></i> Settings</a>
-                            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
                         </div>
                     </div>
                 </div>
@@ -149,7 +150,7 @@ if ($hour >= 5 && $hour < 12) {
             </div>
             <div class="quick-actions">
                 <button class="action-btn"><i class="fas fa-dumbbell"></i> Start Workout</button>
-                <button class="action-btn secondary"><i class="fas fa-calendar-alt"></i> Book Class</button>
+                <a href="../welcome/schedule-session.php" class="action-btn secondary"><i class="fas fa-calendar-alt"></i> Book Class</a>
             </div>
         </div>
         
@@ -280,6 +281,7 @@ if ($hour >= 5 && $hour < 12) {
     </div>
     
     <script src="sidebar-script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
         const backgrounds = [
             'url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1470&q=80")',
@@ -297,103 +299,37 @@ if ($hour >= 5 && $hour < 12) {
         
         changeBackground();
         setInterval(changeBackground, 8000);
+
+
+        document.querySelector('.dropdown-menu').addEventListener('click', function() {
+            this.querySelector('.dropdown-content').classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function(event) {
+            if (!event.target.matches('.dropdown-menu') && !event.target.matches('.fa-chevron-down')) {
+                const dropdowns = document.querySelectorAll('.dropdown-content');
+                dropdowns.forEach(dropdown => {
+                    if (dropdown.classList.contains('show')) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+            }
+        });
+
+        const msg = localStorage.getItem('toastMessage');
+if (msg) {
+  Toastify({
+    text: msg,
+    duration: 5000,
+    gravity: "top",
+    position: "center",
+    backgroundColor: "#28a745",
+    close: true
+  }).showToast();
+  localStorage.removeItem('toastMessage');
+}
     </script>
 </body>
 </html>
 
-
-
-
-
-<!-- 
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fitness Dashboard</title>
-    <link rel="stylesheet" href="welcome-styles.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-</head>
-<body>
-    <div class="container">
-
-        <nav class="navbar">
-            <ul>
-                <li><a href="index.php">Home</a></li>
-                <li><a href="profile.php">Profile</a></li>
-                <li><a href="fitness.php">Fitness</a></li>
-                <li><a href="logout.php">Logout</a></li>
-            </ul>
-        </nav>
-
-
-        <div class="welcome-section">
-            <h1>Welcome, <?= htmlspecialchars($user_data['first_name']) ?>!</h1>
-            <p>We're excited to have you on board. Track your fitness progress and take control of your health today!</p>
-        </div>
-
-        
-        <div class="dashboard-container">
-            <div class="profile-section">
-                <img src="<?= htmlspecialchars($profile_pic) ?>" alt="Profile Picture">
-                <h2><?= htmlspecialchars($user_data['first_name'] . ' ' . $user_data['last_name']) ?></h2>
-            </div>
-
-            <div class="fitness-stats">
-                <h3>BMI: <?= $bmi ? number_format($bmi, 2) . " ($bmi_category)" : "Not Available" ?></h3>
-                <p>Weight: <?= $fitness_data['user_weight'] ?? 'N/A' ?> kg</p>
-                <p>Height: <?= $fitness_data['user_height'] ?? 'N/A' ?> cm</p>
-            </div>
-
-            <div class="fitness-cards">
-                <div class="card">
-                    <h4>Track Progress</h4>
-                    <p>Log your daily activities and monitor improvements over time.</p>
-                </div>
-                <div class="card">
-                    <h4>Diet & Nutrition</h4>
-                    <p>Stay on top of your nutrition goals with our personalized diet suggestions.</p>
-                </div>
-                <div class="card">
-                    <h4>Workouts</h4>
-                    <p>Access a variety of workout routines to help you achieve your fitness goals.</p>
-                </div>
-            </div>
-
-       
-            <div class="recommendations">
-                <h3>Recommendations</h3>
-                <p>For better fitness, maintain a balanced diet and exercise regularly!</p>
-            </div>
-        </div>
-
-        
-        <footer class="footer">
-            <p>&copy; 2025 Fitness Dashboard. All rights reserved.</p>
-        </footer>
-    </div>
-
-
-    <script>
-         const backgrounds = [
-            'url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1470&q=80")',
-            'url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1470&q=80")',
-            'url("https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1470&q=80")'
-        ];
-        
-        let currentBg = 0;
-        const bgElement = document.querySelector('.background');
-        
-        function changeBackground() {
-            bgElement.style.backgroundImage = backgrounds[currentBg];
-            currentBg = (currentBg + 1) % backgrounds.length;
-        }
-        
-        changeBackground();
-        setInterval(changeBackground, 8000);
-    </script>
-</body>
-</html>
- -->

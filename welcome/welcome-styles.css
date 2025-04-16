@@ -25,12 +25,10 @@ body {
   background-position: center;
   transition: background-image 1.5s ease-in-out;
   z-index: -1;
-  filter: brightness(0.3) blur(5px);
+  filter: brightness(0.3) blur(7px);
 }
 
 .container {
-  max-width: 1400px;
-  margin: 0 auto;
   padding: 20px;
 }
 
@@ -168,7 +166,7 @@ body {
 
 /* Welcome Banner */
 .welcome-banner {
-  background: rgba(30, 60, 114, 0.3);
+  background: rgba(30, 60, 114, 0.5);
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 30px;
@@ -237,7 +235,7 @@ body {
 }
 
 .dashboard-card {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border-radius: 15px;
   overflow: hidden;

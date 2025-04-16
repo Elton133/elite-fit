@@ -103,6 +103,20 @@ $result = mysqli_query($conn, $workout_query);
                         </select>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label>Role:</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user-tag"></i>
+                        <select name="role" id="role" required>
+                            <option value="">Choose a role</option>
+                            <option value="user">Regular User</option>
+                            <option value="trainer">Trainer</option>
+                            <option value="admin">Admin</option>
+                            <option value="equipment_manager">Equipment Manager</option>
+                        </select>
+                    </div>
+                </div>
                 
                 <div class="form-group">
                     <label>Date of Birth:</label>
@@ -130,7 +144,7 @@ $result = mysqli_query($conn, $workout_query);
                     <label>Weight (kg):</label>
                     <div class="input-with-icon">
                         <i class="fas fa-weight"></i>
-                        <input type="number" name="user_weight" placeholder="Enter your weight in kg" required>
+                        <input type="number" name="user_weight" placeholder="Enter your weight in kg" >
                     </div>
                 </div>
                 
@@ -138,7 +152,7 @@ $result = mysqli_query($conn, $workout_query);
                     <label>Height (cm):</label>
                     <div class="input-with-icon">
                         <i class="fas fa-ruler-vertical"></i>
-                        <input type="number" name="user_height" placeholder="Enter your height in cm" required>
+                        <input type="number" name="user_height" placeholder="Enter your height in cm" >
                     </div>
                 </div>
                 
@@ -146,7 +160,7 @@ $result = mysqli_query($conn, $workout_query);
                     <label>Body Type:</label>
                     <div class="input-with-icon">
                         <i class="fas fa-child"></i>
-                        <input type="text" name="user_bodytype" placeholder="e.g., Ectomorph, Mesomorph, Endomorph" required>
+                        <input type="text" name="user_bodytype" placeholder="e.g., Ectomorph, Mesomorph, Endomorph" >
                     </div>
                 </div>
                 
@@ -154,7 +168,7 @@ $result = mysqli_query($conn, $workout_query);
                     <label>Experience level (1 - 10):</label>
                     <div class="input-with-icon">
                         <i class="fas fa-star"></i>
-                        <input type="text" name="experience_level" placeholder="Rate your experience from 1 to 10" required>
+                        <input type="text" name="experience_level" placeholder="Rate your experience from 1 to 10" >
                     </div>
                 </div>
                 
@@ -177,7 +191,7 @@ $result = mysqli_query($conn, $workout_query);
                     <label>Fitness Goal (1):</label>
                     <div class="input-with-icon">
                         <i class="fas fa-bullseye"></i>
-                        <input type="text" name="fitness_goal_1" placeholder="Enter your primary fitness goal" required>
+                        <input type="text" name="fitness_goal_1" placeholder="Enter your primary fitness goal" >
                     </div>
                 </div>
                 
@@ -185,7 +199,7 @@ $result = mysqli_query($conn, $workout_query);
                     <label>Fitness Goal (2):</label>
                     <div class="input-with-icon">
                         <i class="fas fa-bullseye"></i>
-                        <input type="text" name="fitness_goal_2" placeholder="Enter your secondary fitness goal" required>
+                        <input type="text" name="fitness_goal_2" placeholder="Enter your secondary fitness goal" >
                     </div>
                 </div>
                 
@@ -193,7 +207,7 @@ $result = mysqli_query($conn, $workout_query);
                     <label>Fitness Goal (3):</label>
                     <div class="input-with-icon">
                         <i class="fas fa-bullseye"></i>
-                        <input type="text" name="fitness_goal_3" placeholder="Enter your tertiary fitness goal" required>
+                        <input type="text" name="fitness_goal_3" placeholder="Enter your tertiary fitness goal" >
                     </div>
                 </div>
                 
@@ -202,7 +216,7 @@ $result = mysqli_query($conn, $workout_query);
                     <label>Preferred Workout Plan 1:</label>
                     <div class="input-with-icon">
                         <i class="fas fa-dumbbell"></i>
-                        <select name="preferred_workout_routine_1" required>
+                        <select name="preferred_workout_routine_1" >
                             <option value="">Choose an option</option>
                             <!-- we want to display the various workout plans in our database table -->
                             <?php mysqli_data_seek($result, 0); while ($row = mysqli_fetch_assoc($result)) { ?>
@@ -216,7 +230,7 @@ $result = mysqli_query($conn, $workout_query);
                     <label>Preferred Workout Plan 2:</label>
                     <div class="input-with-icon">
                         <i class="fas fa-dumbbell"></i>
-                        <select name="preferred_workout_routine_2" required>
+                        <select name="preferred_workout_routine_2" >
                             <option value="">Choose an option</option>
                             <?php mysqli_data_seek($result, 0); while ($row = mysqli_fetch_assoc($result)) { ?>
                                 <option value="<?php echo $row['table_id']; ?>"><?php echo $row['workout_name']; ?></option>
@@ -229,7 +243,7 @@ $result = mysqli_query($conn, $workout_query);
                     <label>Preferred Workout Plan 3:</label>
                     <div class="input-with-icon">
                         <i class="fas fa-dumbbell"></i>
-                        <select name="preferred_workout_routine_3" required>
+                        <select name="preferred_workout_routine_3" >
                             <option value="">Choose an option</option>
                             <?php mysqli_data_seek($result, 0); while ($row = mysqli_fetch_assoc($result)) { ?>
                                 <option value="<?php echo $row['table_id']; ?>"><?php echo $row['workout_name']; ?></option>
@@ -272,6 +286,7 @@ $result = mysqli_query($conn, $workout_query);
         <div class="link-to-login" id="link-to-login">Already have an account? <a href="../login/index.php">Sign in</a></div>
         </form>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
     <script>
 
@@ -288,15 +303,16 @@ document.getElementById('togglePassword').addEventListener('click', function() {
 let currentSection = 1;
 
 function nextSection() {
+    if (currentSection === 1) {
+        const role = document.getElementById('role').value;
+        // Skip section 2 for non-user roles
+        if (role === 'trainer' || role === 'admin' || role === 'equipment_manager') {
+            currentSection = 2; // Skip to section 3
+        }
+    }
+    
     if (currentSection < 3) {
         currentSection++;
-        showSection(currentSection);
-    }
-}
-
-function prevSection() {
-    if (currentSection > 1) {
-        currentSection--;
         showSection(currentSection);
     }
 }
@@ -312,6 +328,9 @@ function prevSection() {
     document.getElementById('submitBtn').classList.add('hidden');
     document.getElementById('link-to-login').classList.add('hidden');
     
+    const role = document.getElementById('role').value;
+    const skipSection2 = (role === 'trainer' || role === 'admin' || role === 'equipment_manager');
+    
     if (sectionNum === 1) {
         // Show section 1
         document.getElementById('section1').classList.remove('hidden');
@@ -326,6 +345,13 @@ function prevSection() {
         document.querySelector('.step-indicator[data-step="3"]').classList.remove('active');
     } 
     else if (sectionNum === 2) {
+        if (skipSection2) {
+            // Skip to section 3 if role is not 'user'
+            currentSection = 3;
+            showSection(3);
+            return;
+        }
+        
         // Show section 2
         document.getElementById('section2').classList.remove('hidden');
         
@@ -348,7 +374,12 @@ function prevSection() {
         
         // Update step indicators
         document.querySelector('.step-indicator[data-step="1"]').classList.add('completed');
-        document.querySelector('.step-indicator[data-step="2"]').classList.add('completed');
+        if (skipSection2) {
+            // If section 2 was skipped, don't mark it as completed
+            document.querySelector('.step-indicator[data-step="2"]').classList.remove('completed');
+        } else {
+            document.querySelector('.step-indicator[data-step="2"]').classList.add('completed');
+        }
         document.querySelector('.step-indicator[data-step="3"]').classList.add('active');
     }
 }
@@ -375,6 +406,13 @@ function prevSection() {
         
         changeBackground(); // Set initial background
         setInterval(changeBackground, 5000); // Change every 5 seconds
+
+// Add this to your JavaScript section
+document.getElementById('role').addEventListener('change', function() {
+    // Reset to section 1 when role changes
+    currentSection = 1;
+    showSection(1);
+});
     </script>
 </body>
 </html>

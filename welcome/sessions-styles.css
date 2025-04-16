@@ -1,0 +1,277 @@
+/* My Sessions Page Styles */
+.page-title {
+  text-align: center;
+  margin: 20px 0 30px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.page-title h2 {
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+
+.page-title p {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.sessions-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.btn-new-session {
+  background-color: #e74c3c;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.btn-new-session:hover {
+  background-color: #c0392b;
+}
+
+.btn-new-session i {
+  margin-right: 5px;
+}
+
+.sessions-container {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  overflow: hidden;
+}
+
+.date-header {
+  background-color: #f8f9fa;
+  padding: 10px 20px;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  position: relative;
+}
+
+.date-header.past {
+  background-color: #f1f1f1;
+  color: #777;
+}
+
+.past-label {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #777;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+
+.session-card {
+  display: grid;
+  grid-template-columns: 120px 1fr auto auto;
+  gap: 15px;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+}
+
+.session-card:last-child {
+  border-bottom: none;
+}
+
+.session-card.cancelled {
+  background-color: #f8f8f8;
+  opacity: 0.7;
+}
+
+.session-time {
+  font-weight: 600;
+  color: #333;
+}
+
+.session-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.session-type {
+  font-weight: 500;
+  color: #e74c3c;
+}
+
+.session-type i {
+  margin-right: 5px;
+}
+
+.session-trainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trainer-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.trainer-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trainer-name {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.session-notes {
+  font-size: 0.85rem;
+  color: #777;
+  font-style: italic;
+  margin-top: 5px;
+}
+
+.session-notes i {
+  margin-right: 5px;
+}
+
+.session-status {
+  text-align: center;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.status-badge.scheduled {
+  background-color: #4caf50;
+}
+
+.status-badge.completed {
+  background-color: #2196f3;
+}
+
+.status-badge.cancelled {
+  background-color: #f44336;
+}
+
+.status-badge.no-show {
+  background-color: #ff9800;
+}
+
+.session-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit,
+.btn-cancel,
+.btn-rate {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-edit {
+  background-color: #f8f9fa;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.btn-edit:hover {
+  background-color: #e9ecef;
+}
+
+.btn-cancel {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.btn-cancel:hover {
+  background-color: #f1b0b7;
+}
+
+.btn-rate {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.btn-rate:hover {
+  background-color: #ffe8a1;
+}
+
+.no-sessions {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.no-sessions i {
+  font-size: 3rem;
+  color: #e74c3c;
+  margin-bottom: 15px;
+}
+
+.no-sessions h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.no-sessions p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.btn-schedule-now {
+  display: inline-block;
+  background-color: #e74c3c;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.btn-schedule-now:hover {
+  background-color: #c0392b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .session-card {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .session-time {
+    font-size: 1.1rem;
+  }
+
+  .session-status,
+  .session-actions {
+    justify-content: flex-start;
+  }
+}

@@ -30,7 +30,7 @@ if (isset($_GET['registered']) && $_GET['registered'] == 1) {
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
     <div class="background"></div>
@@ -44,39 +44,10 @@ if (isset($_GET['registered']) && $_GET['registered'] == 1) {
         </div>
 
         <?php if (!empty($error_message)): ?>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Toastify({
-                text: "<?php echo addslashes($error_message); ?>",
-                duration: 3000,
-                gravity: "top", // `top` or `bottom`
-                position: "right", // `left`, `center` or `right`
-                stopOnFocus: true,
-                close: true,
-                style: {
-                    background: "linear-gradient(to right, #ff4b2b, #ff416c)",
-                }
-            }).showToast();
-        });
-    </script>
+
 <?php endif; ?>
 
 <?php if (!empty($success_message)): ?>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Toastify({
-                text: "<?php echo addslashes($success_message); ?>",
-                duration: 3000,
-                gravity: "top",
-                position: "right",
-                stopOnFocus: true,
-                close: true,
-                style: {
-                    background: "linear-gradient(to right, #00b09b, #96c93d)",
-                }
-            }).showToast();
-        });
-    </script>
 <?php endif; ?>
 
 
@@ -104,11 +75,12 @@ if (isset($_GET['registered']) && $_GET['registered'] == 1) {
                         <input type="checkbox" name="remember_me" id="remember_me" value="1">
                         <label for="remember_me">Remember me</label>
                     </div>
-                </div>
-                
-                <div class="forgot-password">
+                    <div class="forgot-password">
                     <a href="forgot-password.php">Forgot password?</a>
                 </div>
+                </div>
+                
+                
             </div>
 
             <div class="btn-container login-btn-container">
@@ -125,20 +97,17 @@ if (isset($_GET['registered']) && $_GET['registered'] == 1) {
         <div class="social-login">
             <p>Or login with</p>
             <div class="social-buttons">
-                <a href="#" class="social-button google">
-                    <i class="fab fa-google"></i>
-                </a>
-                <a href="#" class="social-button facebook">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="#" class="social-button apple">
-                    <i class="fab fa-apple"></i>
+                <a href="#" >
+                    <img style="height: 40px; width:40px;" src="../register/google.png" alt="google">
                 </a>
             </div>
         </div>
     </div>
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+   
+
+
     <script>
         
         // Toggle password visibility

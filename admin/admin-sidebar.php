@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="sidebar-styles.css">
+    <link rel="stylesheet" href="../welcome/sidebar-styles.css">
 </head>
 <body>
 <div class="sidebar">
@@ -21,12 +21,12 @@
     </div>
     
     <div class="sidebar-user">
-        <div class="sidebar-avatar">
+        <!-- <div class="sidebar-avatar">
             <img src="<?php echo htmlspecialchars($profile_picture); ?>" alt="Profile Picture">
-        </div>
+        </div> -->
         <div class="sidebar-user-info">
-            <h3><?= htmlspecialchars($user_data['first_name'] . ' ' . $user_data['last_name']) ?></h3>
-            <p>Experience Level:<?php echo htmlspecialchars($fitness_data['experience_level'] ?? 'Member'); ?></p>
+            <!-- <h3><?= htmlspecialchars($user_data['first_name'] . ' ' . $user_data['last_name']) ?></h3>
+            <p>Experience Level:<?php echo htmlspecialchars($fitness_data['experience_level'] ?? 'Member'); ?></p> -->
         </div>
     </div>
     
@@ -36,18 +36,6 @@
                 <a href="welcome.php">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a href="../workouts/workouts.php">
-                    <i class="fas fa-dumbbell"></i>
-                    <span>Workouts</span>
-                </a>
-            </li>
-            <li>
-                <a href="../welcome/requests.php">
-                    <i class="fas fa-mail-bulk"></i>
-                    <span>Requests</span>
                 </a>
             </li>
             <li>

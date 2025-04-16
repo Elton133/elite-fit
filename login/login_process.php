@@ -13,7 +13,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare statement to prevent SQL injection
-    $query = "SELECT * FROM user_login_details WHERE username = ?";
+    $query = "SELECT uld.*, urd.* 
+              FROM user_login_details uld 
+              JOIN user_register_details urd ON uld.username = urd.email 
+              WHERE uld.username = ?";
     $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, "s", $email);
     mysqli_stmt_execute($stmt);
@@ -21,32 +24,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($row = mysqli_fetch_assoc($result)) {
         $hashed_password = $row['user_password'];
+
+        // Verify if the provided password matches the hashed password
         if (password_verify($password, $hashed_password)) {
+            // Set all relevant session variables
             $_SESSION['loggedin'] = true;
             $_SESSION['email'] = $email;
-            $_SESSION['table_id'] = $row['table_id'] ?? null;
-            
-            // Fetch fitness details if available
-            if ($_SESSION['table_id']) {
-                $fitness_query = "SELECT * FROM user_fitness_details WHERE table_id = ?";
-                $stmt_fitness = mysqli_prepare($conn, $fitness_query);
-                mysqli_stmt_bind_param($stmt_fitness, "i", $_SESSION['table_id']);
-                mysqli_stmt_execute($stmt_fitness);
-                $fitness_result = mysqli_stmt_get_result($stmt_fitness);
-                
-                if ($fitness_data = mysqli_fetch_assoc($fitness_result)) {
-                    $_SESSION['fitness_details'] = $fitness_data;
-                }
-            }
+            $_SESSION['table_id'] = $row['table_id'];
+            $_SESSION['role'] = $row['role'];
+            $_SESSION['first_name'] = $row['first_name'];
+            $_SESSION['last_name'] = $row['last_name'];
+            $_SESSION['profile_picture'] = $row['profile_picture'];
+            $_SESSION['user_id'] = $row['table_id']; // Additional alias for table_id
+            $_SESSION['full_name'] = $row['first_name'] . ' ' . $row['last_name'];
 
-            header("Location: ../welcome/welcome.php"); // Redirect to dashboard
+            // Check role and redirect accordingly
+            switch(strtolower($_SESSION['role'])) {
+                case 'admin':
+                    $message = "Login successful";
+echo "<script>
+   localStorage.setItem('toastMessage', '$message');
+   setTimeout(function() {
+       window.location.href='../admin/admin_dashboard.php';
+   }, 100);
+</script>";
+
+                    // header("Location: ../admin/admin_dashboard.php");
+                    break;
+                case 'trainer':
+                    header("Location: ../trainer/trainer-dashboard.php");
+                    break;
+                case 'equipment_manager':
+                    header("Location: ../equipment/manager-dashboard.php");
+                    break;
+                case 'user':
+                default:
+                $message = "Login successful";
+                echo "<script>
+                   localStorage.setItem('toastMessage', '$message');
+                   setTimeout(function() {
+                       window.location.href='../welcome/welcome.php';
+                   }, 100);
+                </script>";
+                    break;
+            }
             exit();
         } else {
-            header("Location: login.php?error=Incorrect password");
+            echo "<script>alert('Invalid details'); window.location.href='../login/index.php';</script>";
             exit();
         }
     } else {
-        header("Location: login.php?error=User does not exist");
+        echo "<script>alert('User not found'); window.location.href='../login/index.php';</script>";
         exit();
     }
 } else {
