@@ -1,111 +1,6 @@
-<?php
-session_start();
-require_once('../datacon.php');
+<?php include '../services/schedule-session-logic.php'?>
+<?php include '../services/welcome-logic.php'?>
 
-// Redirect if session variables are not set
-if (!isset($_SESSION['email']) || !isset($_SESSION['table_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-$email = $_SESSION['email'];
-$user_id = $_SESSION['table_id'];
-
-// // Check if trainer_id is provided
-// if (!isset($_GET['table_id']) || !is_numeric($_GET['table_id'])) {
-//     header("Location: ../trainer/trainers.php");
-//     exit();
-// }
-
-// $trainer_id = $_GET['table_id'];
-
-// Fetch trainer details
-$sql_trainer = "SELECT table_id, first_name, last_name, specialization, profile_picture 
-                FROM user_register_details WHERE table_id = ?";
-$stmt_trainer = $conn->prepare($sql_trainer);
-$stmt_trainer->bind_param("i", $trainer_id);
-$stmt_trainer->execute();
-$result_trainer = $stmt_trainer->get_result();
-
-if ($result_trainer->num_rows === 0) {
-    header("Location: trainers.php");
-    exit();
-}
-
-$trainer = $result_trainer->fetch_assoc();
-$stmt_trainer->close();
-
-// Fetch trainer availability
-$sql_availability = "SELECT day_of_week, start_time, end_time 
-                    FROM trainer_availability 
-                    WHERE trainer_id = ? 
-                    ORDER BY FIELD(day_of_week, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')";
-$stmt_availability = $conn->prepare($sql_availability);
-$stmt_availability->bind_param("i", $trainer_id);
-$stmt_availability->execute();
-$result_availability = $stmt_availability->get_result();
-$availabilities = [];
-
-while ($row = $result_availability->fetch_assoc()) {
-    $availabilities[] = $row;
-}
-$stmt_availability->close();
-
-// Process form submission
-$message = '';
-$messageType = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validate and sanitize input
-    $session_date = $_POST['session_date'] ?? '';
-    $start_time = $_POST['start_time'] ?? '';
-    $end_time = $_POST['end_time'] ?? '';
-    $session_type = $_POST['session_type'] ?? '';
-    $notes = $_POST['notes'] ?? '';
-    
-    // Basic validation
-    if (empty($session_date) || empty($start_time) || empty($end_time) || empty($session_type)) {
-        $message = "Please fill in all required fields.";
-        $messageType = "error";
-    } else {
-        // Check if the slot is available (not already booked)
-        $sql_check = "SELECT session_id FROM training_sessions 
-                     WHERE trainer_id = ? AND session_date = ? 
-                     AND ((start_time <= ? AND end_time > ?) 
-                     OR (start_time < ? AND end_time >= ?) 
-                     OR (start_time >= ? AND end_time <= ?))";
-        
-        $stmt_check = $conn->prepare($sql_check);
-        $stmt_check->bind_param("isssssss", $trainer_id, $session_date, $end_time, $start_time, $end_time, $start_time, $start_time, $end_time);
-        $stmt_check->execute();
-        $result_check = $stmt_check->get_result();
-        
-        if ($result_check->num_rows > 0) {
-            $message = "This time slot is already booked. Please select another time.";
-            $messageType = "error";
-        } else {
-            // Insert the new session
-            $sql_insert = "INSERT INTO training_sessions (user_id, trainer_id, session_date, start_time, end_time, session_type, notes) 
-                          VALUES (?, ?, ?, ?, ?, ?, ?)";
-            
-            $stmt_insert = $conn->prepare($sql_insert);
-            $stmt_insert->bind_param("iisssss", $user_id, $trainer_id, $session_date, $start_time, $end_time, $session_type, $notes);
-            
-            if ($stmt_insert->execute()) {
-                $message = "Your session has been successfully scheduled!";
-                $messageType = "success";
-            } else {
-                $message = "Error scheduling your session. Please try again.";
-                $messageType = "error";
-            }
-            
-            $stmt_insert->close();
-        }
-        
-        $stmt_check->close();
-    }
-}
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -190,7 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             
             <div class="schedule-form-container">
-                <form action="schedule-session.php?trainer_id=<?php echo $trainer_id; ?>" method="post" class="schedule-form">
+            <form action="../welcome/schedule-session.php?trainer_id=<?php echo $trainer_id; ?>" method="post" class="schedule-form">
+
                     <div class="form-group">
                         <label for="session_date">Session Date <span class="required">*</span></label>
                         <input type="date" id="session_date" name="session_date" required min="<?php echo date('Y-m-d'); ?>">
@@ -240,24 +136,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     
     <script src="sidebar-script.js"></script>
+    <script src="../scripts/background.js"></script>
     <script>
-        // Background rotation script from your existing code
-        const backgrounds = [
-            'url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1470&q=80")',
-            'url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1470&q=80")',
-            'url("https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1470&q=80")'
-        ];
-        
-        let currentBg = 0;
-        const bgElement = document.querySelector('.background');
-        
-        function changeBackground() {
-            bgElement.style.backgroundImage = backgrounds[currentBg];
-            currentBg = (currentBg + 1) % backgrounds.length;
-        }
-        
-        changeBackground();
-        setInterval(changeBackground, 8000);
         
         // Form validation
         document.querySelector('.schedule-form').addEventListener('submit', function(e) {

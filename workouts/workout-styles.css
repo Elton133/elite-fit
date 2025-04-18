@@ -1,0 +1,34 @@
+.workouts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 15px;
+}
+.plan-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.plan-card h3 {
+  color: #2c3e50;
+}
+.plan-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.8em;
+}
+.status-active {
+  background: #c8e6c9;
+  color: #256029;
+}
+.status-completed {
+  background: #ffcdd2;
+  color: #c63737;
+}
+.no-workouts {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}

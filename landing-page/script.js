@@ -171,3 +171,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // Trigger initial scroll event to show elements in viewport
     window.dispatchEvent(new Event('scroll'));
 });
+
+
+
+
+
+function showToast(message, type = "success") {
+    const toast = document.createElement("div");
+    toast.className = "toast";
+
+    if (type === "error") {
+        toast.style.backgroundColor = "#e74c3c";
+    } else if (type === "success") {
+        toast.style.backgroundColor = "#2ecc71";
+    }
+
+    toast.textContent = message;
+
+    document.getElementById("toast-container").appendChild(toast);
+
+    // Remove after 3s
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}

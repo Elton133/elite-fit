@@ -143,7 +143,7 @@ nav {
   align-items: center;
   margin: 15px 45px;
   padding: 5px 7px;
-  border-radius: 28px;
+  border-radius: 48px;
 }
 .logo {
   display: flex;
@@ -1126,5 +1126,38 @@ footer {
   .footer-links {
     flex-direction: column;
     gap: 30px;
+  }
+}
+
+#toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+}
+
+.toast {
+  background-color: #333;
+  color: #fff;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: translateX(100%);
+  animation: slideIn 0.3s forwards, fadeOut 0.3s 2.5s forwards;
+}
+
+@keyframes slideIn {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(100%);
   }
 }

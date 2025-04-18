@@ -12,6 +12,8 @@
 </head>
 
 <body>
+    <div id="toast-container"></div>
+
     <header>
         <nav class="glass-nav">
             <div class="logo">
@@ -464,21 +466,21 @@
                             <i class="fas fa-map-marker-alt"></i>
                             <div>
                                 <h4>Location</h4>
-                                <p>123 Fitness Street, Gym City, GC 12345</p>
+                                <p>Regional Maritime University</p>
                             </div>
                         </div>
                         <div class="contact-item">
                             <i class="fas fa-phone-alt"></i>
                             <div>
                                 <h4>Phone</h4>
-                                <p>(123) 456-7890</p>
+                                <p>+233 202 5404 12</p>
                             </div>
                         </div>
                         <div class="contact-item">
                             <i class="fas fa-envelope"></i>
                             <div>
                                 <h4>Email</h4>
-                                <p>info@elitefit.com</p>
+                                <p>eltonmorden029@gmail.com</p>
                             </div>
                         </div>
                         <div class="contact-item">
@@ -501,13 +503,10 @@
                     <h3>Send a Message</h3>
                     <form id="contactForm">
                         <div class="form-group">
-                            <input type="text" id="name" name="name" placeholder="Your Name" required>
+                            <input type="text" id="to_name" name="name" placeholder="Your Name" required>
                         </div>
                         <div class="form-group">
                             <input type="email" id="email" name="email" placeholder="Your Email" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="tel" id="phone" name="phone" placeholder="Your Phone">
                         </div>
                         <div class="form-group">
                             <select id="subject" name="subject" required>
@@ -593,6 +592,27 @@
     </a>
 
     <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        (function () {
+            emailjs.init("hFVsIFEYcNxuwHdM1");
+        })();
+
+        document.getElementById("contactForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            emailjs.send("service_1usc5qs", "template_psrijdj", {
+                to_name: document.getElementById("to_name").value,
+                email: document.getElementById("email").value,
+                subject: document.getElementById("subject").value,
+            }).then(function (response) {
+                showToast("Email sent successfully!", "success");
+            }, function (error) {
+                showToast("Failed to send email: " + JSON.stringify(error), "error");
+            });
+        });
+
+    </script>
 </body>
 
 </html>

@@ -1,30 +1,4 @@
-<?php
-session_start();
-require_once('../datacon.php');
-
-// Redirect if session variables are not set
-if (!isset($_SESSION['email']) || !isset($_SESSION['table_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-$email = $_SESSION['email'];
-$user_id = $_SESSION['table_id'];
-
-// Fetch user's scheduled sessions
-$sql_sessions = "SELECT ts.session_id, ts.session_date, ts.start_time, ts.end_time, 
-                ts.session_type, ts.session_status, ts.notes,
-                t.first_name, t.last_name, t.profile_picture
-                FROM training_sessions ts
-                JOIN trainers t ON ts.trainer_id = t.trainer_id
-                WHERE ts.user_id = ?
-                ORDER BY ts.session_date DESC, ts.start_time DESC";
-
-$stmt_sessions = $conn->prepare($sql_sessions);
-$stmt_sessions->bind_param("i", $user_id);
-$stmt_sessions->execute();
-$result_sessions = $stmt_sessions->get_result();
-?>
+<?php include '../services/mysessions-logic.php'?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -67,7 +41,7 @@ $result_sessions = $stmt_sessions->get_result();
         </div>
         
         <div class="sessions-actions">
-            <a href="trainers.php" class="btn-new-session"><i class="fas fa-plus"></i> Schedule New Session</a>
+            <a href="../trainer/trainers.php" class="btn-new-session"><i class="fas fa-plus"></i> Schedule New Session</a>
         </div>
         
         <div class="sessions-container">
@@ -169,24 +143,6 @@ $result_sessions = $stmt_sessions->get_result();
     </div>
     
     <script src="sidebar-script.js"></script>
-    <script>
-        // Background rotation script from your existing code
-        const backgrounds = [
-            'url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1470&q=80")',
-            'url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1470&q=80")',
-            'url("https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1470&q=80")'
-        ];
-        
-        let currentBg = 0;
-        const bgElement = document.querySelector('.background');
-        
-        function changeBackground() {
-            bgElement.style.backgroundImage = backgrounds[currentBg];
-            currentBg = (currentBg + 1) % backgrounds.length;
-        }
-        
-        changeBackground();
-        setInterval(changeBackground, 8000);
-    </script>
+    <script src="../scripts/background.js"></script>
 </body>
 </html>

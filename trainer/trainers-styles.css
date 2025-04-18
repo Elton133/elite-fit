@@ -1,0 +1,171 @@
+.page-title {
+  text-align: center;
+  margin: 20px 0 30px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.page-title h2 {
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+
+.page-title p {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.trainers-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.trainer-card {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.trainer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.trainer-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  z-index: 1;
+}
+
+.trainer-status.available {
+  background-color: #4caf50;
+}
+
+.trainer-status.fully-booked {
+  background-color: #ff9800;
+}
+
+.trainer-status.on-leave {
+  background-color: #f44336;
+}
+
+.trainer-image {
+  height: 200px;
+  overflow: hidden;
+}
+
+.trainer-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.trainer-card:hover .trainer-image img {
+  transform: scale(1.05);
+}
+
+.trainer-info {
+  padding: 15px;
+}
+
+.trainer-info h3 {
+  margin: 0 0 5px;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.trainer-specialization {
+  color: #e74c3c;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.trainer-experience {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.trainer-bio {
+  color: #777;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 15px;
+}
+
+.trainer-actions {
+  display: flex;
+  padding: 0 15px 15px;
+  gap: 10px;
+}
+
+.trainer-actions a {
+  flex: 1;
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 5px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-view-profile {
+  background-color: #f8f9fa;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.btn-view-profile:hover {
+  background-color: #e9ecef;
+}
+
+.btn-schedule {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-schedule:hover {
+  background-color: #c0392b;
+}
+
+.no-trainers {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+}
+
+.no-trainers i {
+  font-size: 3rem;
+  color: #e74c3c;
+  margin-bottom: 15px;
+}
+
+.no-trainers p {
+  font-size: 1.1rem;
+  color: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .trainers-container {
+    grid-template-columns: 1fr;
+  }
+
+  .trainer-card {
+    max-width: 100%;
+  }
+}

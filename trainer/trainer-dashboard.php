@@ -1,104 +1,4 @@
-<?php
-    session_start();
-    require_once('../datacon.php');
-
-    // Redirect if session variables are not set or user is not a trainer
-    // if (!isset($_SESSION['email']) || !isset($_SESSION['table_id']) || $_SESSION['role'] !== 'trainer') {
-    //     header("Location: ../login/index.php");
-    //     exit();
-    // }
-
-    $email = $_SESSION['email'];
-    $table_id = $_SESSION['table_id'];
-
-    // Fetch trainer data
-    $sql_trainer = "SELECT table_id, first_name, last_name, profile_picture FROM user_register_details WHERE email = ? AND role = 'trainer'";
-    $stmt_trainer = $conn->prepare($sql_trainer);
-    $stmt_trainer->bind_param("s", $email);
-    $stmt_trainer->execute();
-    $result_trainer = $stmt_trainer->get_result();
-    $trainer_data = $result_trainer->fetch_assoc();
-    $stmt_trainer->close();
-
-    // Handle profile picture
-    $profile_pic = "../register/uploads/default-avatar.jpg"; 
-    if (!empty($trainer_data['profile_picture']) && file_exists("../register/uploads/" . $trainer_data['profile_picture'])) {
-        $profile_pic = "../register/uploads/" . $trainer_data['profile_picture'];
-    }
-
-    // Fetch pending workout plan requests
-    $sql_pending = "SELECT wr.request_id, wr.user_id, wr.request_date, wr.status, 
-                    u.first_name, u.last_name, u.profile_picture,
-                    ufd.fitness_goal_1, ufd.fitness_goal_2, ufd.fitness_goal_3, ufd.experience_level
-                    FROM workout_requests wr
-                    JOIN user_register_details u ON wr.user_id = u.table_id
-                    JOIN user_fitness_details ufd ON wr.user_id = ufd.table_id
-                    WHERE wr.trainer_id = ? AND wr.status = 'pending'
-                    ORDER BY wr.request_date DESC
-                    LIMIT 5";
-    $stmt_pending = $conn->prepare($sql_pending);
-    $stmt_pending->bind_param("i", $trainer_data['table_id']);
-    $stmt_pending->execute();
-    $result_pending = $stmt_pending->get_result();
-    $pending_requests = [];
-    while ($row = $result_pending->fetch_assoc()) {
-        $pending_requests[] = $row;
-    }
-    $stmt_pending->close();
-
-    // Fetch active clients
-    $sql_active = "SELECT u.table_id, u.first_name, u.last_name, u.profile_picture,
-                wp.plan_id, wp.plan_name, wp.start_date, wp.end_date, wp.last_updated
-                FROM workout_plans wp
-                JOIN user_register_details u ON wp.user_id = u.table_id
-                WHERE wp.trainer_id = ? AND wp.status = 'active'
-                ORDER BY wp.last_updated DESC
-                LIMIT 5";
-    $stmt_active = $conn->prepare($sql_active);
-    $stmt_active->bind_param("i", $trainer_data['table_id']);
-    $stmt_active->execute();
-    $result_active = $stmt_active->get_result();
-    $active_clients = [];
-    while ($row = $result_active->fetch_assoc()) {
-        $active_clients[] = $row;
-    }
-    $stmt_active->close();
-
-    // Fetch trainer stats
-    $sql_stats = "SELECT 
-                (SELECT COUNT(*) FROM workout_plans WHERE trainer_id = ? AND status = 'active') as active_plans,
-                (SELECT COUNT(*) FROM workout_requests WHERE trainer_id = ? AND status = 'pending') as pending_requests,
-                (SELECT COUNT(DISTINCT user_id) FROM workout_plans WHERE trainer_id = ?) as total_clients,
-                (SELECT COUNT(*) FROM trainer_reviews WHERE trainer_id = ?) as total_reviews";
-    $stmt_stats = $conn->prepare($sql_stats);
-    $stmt_stats->bind_param("iiii", $trainer_data['table_id'], $trainer_data['table_id'], $trainer_data['table_id'], $trainer_data['table_id']);
-    $stmt_stats->execute();
-    $trainer_stats = $stmt_stats->get_result()->fetch_assoc();
-    $stmt_stats->close();
-
-    // Calculate average rating
-    $sql_rating = "SELECT AVG(rating) as avg_rating FROM trainer_reviews WHERE trainer_id = ?";
-    $stmt_rating = $conn->prepare($sql_rating);
-    $stmt_rating->bind_param("i", $trainer_data['table_id']);
-    $stmt_rating->execute();
-    $avg_rating = $stmt_rating->get_result()->fetch_assoc()['avg_rating'] ?? 0;
-    $avg_rating = number_format($avg_rating, 1);
-    $stmt_rating->close();
-
-    // greeting
-    $hour = date("H");
-
-    // Determine the time of day
-    if ($hour >= 5 && $hour < 12) {
-        $greeting = "Good morning";
-    } elseif ($hour >= 12 && $hour < 17) {
-        $greeting = "Good afternoon";
-    } elseif ($hour >= 17 && $hour < 21) {
-        $greeting = "Good evening";
-    } else {
-        $greeting = "Good night";
-    }
-?>
+<?php include '../services/trainer-dashboard-logic.php'?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -308,62 +208,44 @@
                 </div>
                 
                 <div class="dashboard-card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-calendar-alt"></i> Upcoming Sessions</h3>
-                        <a href="schedule.php" class="view-all">View Schedule</a>
-                    </div>
-                    <div class="card-content">
-                        <div class="class-list">
-                            <div class="class-item">
-                                <div class="class-time">
-                                    <span class="time">09:00</span>
-                                    <span class="day">Today</span>
-                                </div>
-                                <div class="class-details">
-                                    <h4>Personal Training - Sophia Chen</h4>
-                                    <p>Focus: Upper Body Strength</p>
-                                </div>
-                                <button class="book-btn">Start</button>
-                            </div>
-                            
-                            <div class="class-item">
-                                <div class="class-time">
-                                    <span class="time">11:30</span>
-                                    <span class="day">Today</span>
-                                </div>
-                                <div class="class-details">
-                                    <h4>Plan Review - Michael Johnson</h4>
-                                    <p>Monthly Progress Check</p>
-                                </div>
-                                <button class="book-btn">Start</button>
-                            </div>
-                            
-                            <div class="class-item">
-                                <div class="class-time">
-                                    <span class="time">15:00</span>
-                                    <span class="day">Today</span>
-                                </div>
-                                <div class="class-details">
-                                    <h4>Group HIIT Class</h4>
-                                    <p>8 participants</p>
-                                </div>
-                                <button class="book-btn">Start</button>
-                            </div>
-                            
-                            <div class="class-item">
-                                <div class="class-time">
-                                    <span class="time">09:30</span>
-                                    <span class="day">Tomorrow</span>
-                                </div>
-                                <div class="class-details">
-                                    <h4>Initial Consultation - New Client</h4>
-                                    <p>Fitness Assessment</p>
-                                </div>
-                                <button class="book-btn" style="background: rgba(255,255,255,0.2);">Prepare</button>
-                            </div>
+    <div class="card-header">
+        <h3><i class="fas fa-calendar-alt"></i> Upcoming Sessions</h3>
+        <a href="schedule.php" class="view-all">View Schedule</a>
+    </div>
+    <div class="card-content">
+        <div class="class-list">
+            <?php if (count($sessions) > 0): ?>
+                <?php foreach ($sessions as $session): ?>
+                    <?php
+                        $sessionDate = date("Y-m-d");
+                        $dayLabel = $session['session_date'] === $sessionDate ? "Today" :
+                                    ($session['session_date'] === date("Y-m-d", strtotime("+1 day")) ? "Tomorrow" :
+                                    date("D, M j", strtotime($session['session_date'])));
+
+                        // Optional: Get client name (if you have user table)
+                        $userName = "Client #" . $session['user_id'];
+                    ?>
+                    <div class="class-item">
+                        <div class="class-time">
+                            <span class="time"><?php echo date("H:i", strtotime($session['start_time'])); ?></span>
+                            <span class="day"><?php echo $dayLabel; ?></span>
                         </div>
+                        <div class="class-details">
+                            <h4><?php echo htmlspecialchars($session['session_type']) . " - " . $userName; ?></h4>
+                            <p><?php echo htmlspecialchars($session['notes']); ?></p>
+                        </div>
+                        <button class="book-btn">
+                            <?php echo $session['session_date'] === $sessionDate ? "Start" : "Prepare"; ?>
+                        </button>
                     </div>
-                </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p style="padding: 1rem;">No upcoming sessions found.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
             </div>
         </div>
         
@@ -374,40 +256,9 @@
     
     <script src="sidebar-script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="../scripts/background.js"></script>
+    <script src="../scripts/dropdown-menu.js"></script>
     <script>
-        const backgrounds = [
-            'url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1470&q=80")',
-            'url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1470&q=80")',
-            'url("https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1470&q=80")'
-        ];
-        
-        let currentBg = 0;
-        const bgElement = document.querySelector('.background');
-        
-        function changeBackground() {
-            bgElement.style.backgroundImage = backgrounds[currentBg];
-            currentBg = (currentBg + 1) % backgrounds.length;
-        }
-        
-        changeBackground();
-        setInterval(changeBackground, 8000);
-        
-        // Toggle dropdown menu
-        document.querySelector('.dropdown-menu').addEventListener('click', function() {
-            this.querySelector('.dropdown-content').classList.toggle('show');
-        });
-        
-        // Close dropdown when clicking outside
-        window.addEventListener('click', function(event) {
-            if (!event.target.matches('.dropdown-menu') && !event.target.matches('.fa-chevron-down')) {
-                const dropdowns = document.querySelectorAll('.dropdown-content');
-                dropdowns.forEach(dropdown => {
-                    if (dropdown.classList.contains('show')) {
-                        dropdown.classList.remove('show');
-                    }
-                });
-            }
-        });
         const msg = localStorage.getItem('toastMessage');
         if (msg) {
           Toastify({

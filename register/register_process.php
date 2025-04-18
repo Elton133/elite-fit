@@ -21,6 +21,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $date_of_birth = clean_input($_POST["date_of_birth"]);
     $profile_picture = $_FILES["profile_picture"];
     $role = clean_input($_POST["role"]);
+    $specialization = clean_input($_POST["specialization"]);
+    $experience_years = clean_input(($_POST["experience_years"] ?? 0));
+    $bio = clean_input($_POST["bio"]);
+    $availability_status = clean_input($_POST["availability_status"]);
 
     // Validate required fields
     if (empty($first_name) || empty($last_name) || empty($contact_number) || empty($email) || empty($user_password) || empty($location) || empty($gender) || empty($date_of_birth) || empty($role)) {
@@ -138,6 +142,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<script>alert('Error creating login credentials: " . mysqli_error($conn) . "'); window.history.back();</script>";
         exit();
     }
+
+    $trainer_query = "INSERT INTO trainers (first_name, last_name, specialization, experience_years, bio, profile_picture, availability_status)
+VALUES ('$first_name', '$last_name', '$specialization', '$experience_years', '$bio', '$profile_picture', '$availability_status')";
+
+if (!mysqli_query($conn, $trainer_query)) {
+    echo "<script>alert('Error creating login credentials: " . mysqli_error($conn) . "'); window.history.back();</script>";
+    exit();
+}
 
         echo "<script>alert('Registration successful!'); window.location.href='../login/index.php';</script>";
         exit();

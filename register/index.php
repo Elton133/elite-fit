@@ -253,6 +253,38 @@ $result = mysqli_query($conn, $workout_query);
                 </div>
             </div>
 
+<div id="section2b" class="form-section hidden">
+    <h3>Trainer Details</h3>
+
+   
+
+    <div class="form-group">
+        <label for="specialization">Specialization:</label>
+        <input type="text" name="specialization" id="specialization" placeholder="e.g. Strength Training, Cardio" />
+    </div>
+
+    <div class="form-group">
+        <label for="experience_years">Years of Experience:</label>
+        <input type="number" name="experience_years" id="experience_years" min="0" />
+    </div>
+
+    <div class="form-group">
+        <label for="bio">Bio:</label>
+        <textarea name="bio" id="bio" rows="4" placeholder="Write a short professional bio..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="availability_status">Availability:</label>
+        <select name="availability_status" id="availability_status">
+            <option value="Available">Available</option>
+            <option value="Fully Booked">Fully Booked</option>
+            <option value="On Leave">On Leave</option>
+        </select>
+    </div>
+</div>
+
+
+
             <div id="section3" class="form-section hidden">
             <h3>CreatePassword </h3>
                 
@@ -287,132 +319,9 @@ $result = mysqli_query($conn, $workout_query);
         </form>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script src="../scripts/background.js"></script>
+    <script src="../scripts/register.js"></script>
 
-    <script>
 
-
-document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordInput = document.getElementById('password');
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
-        });
-
-        // Track current section
-let currentSection = 1;
-
-function nextSection() {
-    if (currentSection === 1) {
-        const role = document.getElementById('role').value;
-        // Skip section 2 for non-user roles
-        if (role === 'trainer' || role === 'admin' || role === 'equipment_manager') {
-            currentSection = 2; // Skip to section 3
-        }
-    }
-    
-    if (currentSection < 3) {
-        currentSection++;
-        showSection(currentSection);
-    }
-}
-       function showSection(sectionNum) {
-    // Hide all sections first
-    document.getElementById('section1').classList.add('hidden');
-    document.getElementById('section2').classList.add('hidden');
-    document.getElementById('section3').classList.add('hidden');
-    
-    // Hide all buttons first
-    document.getElementById('prevBtn').classList.add('hidden');
-    document.getElementById('nextBtn').classList.add('hidden');
-    document.getElementById('submitBtn').classList.add('hidden');
-    document.getElementById('link-to-login').classList.add('hidden');
-    
-    const role = document.getElementById('role').value;
-    const skipSection2 = (role === 'trainer' || role === 'admin' || role === 'equipment_manager');
-    
-    if (sectionNum === 1) {
-        // Show section 1
-        document.getElementById('section1').classList.remove('hidden');
-        
-        // Section 1: Only show Next button
-        document.getElementById('nextBtn').classList.remove('hidden');
-        document.getElementById('link-to-login').classList.remove('hidden');
-        
-        // Update step indicators
-        document.querySelector('.step-indicator[data-step="1"]').classList.add('active');
-        document.querySelector('.step-indicator[data-step="2"]').classList.remove('active');
-        document.querySelector('.step-indicator[data-step="3"]').classList.remove('active');
-    } 
-    else if (sectionNum === 2) {
-        if (skipSection2) {
-            // Skip to section 3 if role is not 'user'
-            currentSection = 3;
-            showSection(3);
-            return;
-        }
-        
-        // Show section 2
-        document.getElementById('section2').classList.remove('hidden');
-        
-        // Section 2: Show both Previous and Next buttons
-        document.getElementById('prevBtn').classList.remove('hidden');
-        document.getElementById('nextBtn').classList.remove('hidden');
-        
-        // Update step indicators
-        document.querySelector('.step-indicator[data-step="1"]').classList.add('completed');
-        document.querySelector('.step-indicator[data-step="2"]').classList.add('active');
-        document.querySelector('.step-indicator[data-step="3"]').classList.remove('active');
-    }
-    else if (sectionNum === 3) {
-        // Show section 3
-        document.getElementById('section3').classList.remove('hidden');
-        
-        // Section 3: Show Previous and Submit buttons
-        document.getElementById('prevBtn').classList.remove('hidden');
-        document.getElementById('submitBtn').classList.remove('hidden');
-        
-        // Update step indicators
-        document.querySelector('.step-indicator[data-step="1"]').classList.add('completed');
-        if (skipSection2) {
-            // If section 2 was skipped, don't mark it as completed
-            document.querySelector('.step-indicator[data-step="2"]').classList.remove('completed');
-        } else {
-            document.querySelector('.step-indicator[data-step="2"]').classList.add('completed');
-        }
-        document.querySelector('.step-indicator[data-step="3"]').classList.add('active');
-    }
-}
-        // File input label update
-        document.getElementById('profile_picture').addEventListener('change', function() {
-            const fileName = this.files[0]?.name || 'Choose a file';
-            document.querySelector('.file-input-label').textContent = fileName;
-        });
-
-        // Background image rotation
-        const backgrounds = [
-            'url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80")',
-            'url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80")',
-            'url("https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80")'
-        ];
-        
-        let currentBg = 0;
-        const bgElement = document.querySelector('.background');
-        
-        function changeBackground() {
-            bgElement.style.backgroundImage = backgrounds[currentBg];
-            currentBg = (currentBg + 1) % backgrounds.length;
-        }
-        
-        changeBackground(); // Set initial background
-        setInterval(changeBackground, 5000); // Change every 5 seconds
-
-// Add this to your JavaScript section
-document.getElementById('role').addEventListener('change', function() {
-    // Reset to section 1 when role changes
-    currentSection = 1;
-    showSection(1);
-});
-    </script>
 </body>
 </html>

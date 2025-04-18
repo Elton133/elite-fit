@@ -1,47 +1,29 @@
-<?php
-session_start();
-require_once('../datacon.php');
-
-// Auth check for user
-if (!isset($_SESSION['email']) || $_SESSION['role'] !== 'user') {
-    header("Location: ../login/index.php");
-    exit();
-}
-
-$user_id = $_SESSION['table_id'];
-$success = '';
-$error = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $notes = trim($_POST['notes'] ?? '');
-    $trainer_id = $_POST['trainer_id'] ?? null;
-
-    if (empty($notes)) {
-        $error = "Please describe your workout request.";
-    } else {
-        $sql = "INSERT INTO workout_requests (user_id, trainer_id, notes, status, request_date) 
-                VALUES (?, ?, ?, 'pending', NOW())";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("iis", $user_id, $trainer_id, $notes);
-
-        if ($stmt->execute()) {
-            $success = "Request submitted! Trainer will review it soon.";
-        } else {
-            $error = "Something went wrong. Try again.";
-        }
-    }
-}
-?>
+<?php include '../services/workout-requests.php'?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Make Workout Request</title>
+   <link rel="stylesheet" href="welcome-styles.css">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>.container { max-width: 700px; margin-top: 2rem; }</style>
+    <style>
+        body{
+            color:white;
+            font-family: "Fredoka";
+        }
+    .container { max-width: 700px; margin-top: 2rem; }
+
+
+    </style>
 </head>
 <body>
 <div class="container">
+<div class="background"></div>
+    
+    <!-- Include the sidebar -->
+
+    
     <h3>Make a Workout Request</h3>
 
     <?php if ($error): ?>
@@ -63,4 +45,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 </div>
 </body>
+<script src="sidebar-script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="../scripts/background.js"></script>
+    <script src="../scripts/dropdown-menu.js"></script>
+    <script>
+
+        const msg = localStorage.getItem('toastMessage');
+if (msg) {
+  Toastify({
+    text: msg,
+    duration: 5000,
+    gravity: "top",
+    position: "center",
+    backgroundColor: "#28a745",
+    close: true
+  }).showToast();
+  localStorage.removeItem('toastMessage');
+}
+    </script>
 </html>

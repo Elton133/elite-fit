@@ -1,3 +1,5 @@
+<?php include '../services/welcome-logic.php'?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +24,7 @@
     
     <div class="sidebar-user">
         <div class="sidebar-avatar">
-            <img src="<?php echo htmlspecialchars($profile_picture); ?>" alt="Profile Picture">
+        <img src="<?php echo htmlspecialchars($profile_pic); ?>" alt=" Profile Picture">
         </div>
         <div class="sidebar-user-info">
             <h3><?= htmlspecialchars($user_data['first_name'] . ' ' . $user_data['last_name']) ?></h3>
@@ -57,9 +59,9 @@
                 </a>
             </li>
             <li>
-                <a href="classes.php">
+                <a href="my-sessions.php">
                     <i class="fas fa-users"></i>
-                    <span>Classes</span>
+                    <span>Sessions</span>
                 </a>
             </li>
             <li>

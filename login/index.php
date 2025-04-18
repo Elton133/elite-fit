@@ -119,24 +119,9 @@ if (isset($_GET['registered']) && $_GET['registered'] == 1) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script>
-const msg = localStorage.getItem('toastMessage');
-if (msg) {
-  Toastify({
-    text: msg,
-    duration: 5000,
-    gravity: "top",
-    position: "center",
-    backgroundColor: "#dc3545",
-    close: true
-  }).showToast();
-  localStorage.removeItem('toastMessage');
-}
-</script>
 
-
+<script src="../scripts/background.js"></script>
     <script>
-        
         // Toggle password visibility
         document.getElementById('togglePassword').addEventListener('click', function() {
             const passwordInput = document.getElementById('password');
@@ -146,23 +131,18 @@ if (msg) {
             this.classList.toggle('fa-eye-slash');
         });
 
-        // Background image rotation
-        const backgrounds = [
-            'url("https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80")',
-            'url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80")',
-            'url("https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80")'
-        ];
-        
-        let currentBg = 0;
-        const bgElement = document.querySelector('.background');
-        
-        function changeBackground() {
-            bgElement.style.backgroundImage = backgrounds[currentBg];
-            currentBg = (currentBg + 1) % backgrounds.length;
-        }
-        
-        changeBackground(); // Set initial background
-        setInterval(changeBackground, 5000); // Change every 5 seconds
+        const msg = localStorage.getItem('toastMessage');
+            if (msg) {
+            Toastify({
+                text: msg,
+                duration: 5000,
+                gravity: "top",
+                position: "center",
+                backgroundColor: "#dc3545",
+                close: true
+            }).showToast();
+            localStorage.removeItem('toastMessage');
+            }
     </script>
 </body>
 </html>

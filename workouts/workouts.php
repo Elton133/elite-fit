@@ -1,56 +1,4 @@
-<?php
-session_start();
-require_once('../datacon.php');
-
-if (!isset($_SESSION['email']) || !isset($_SESSION['table_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-$email = $_SESSION['email'];
-$table_id = $_SESSION['table_id'];
-
-// Fetch user data
-$sql_user = "SELECT table_id, first_name, last_name, profile_picture FROM user_register_details WHERE email = ?";
-$stmt_user = $conn->prepare($sql_user);
-$stmt_user->bind_param("s", $email);
-$stmt_user->execute();
-$result_user = $stmt_user->get_result();
-$user_data = $result_user->fetch_assoc();
-$stmt_user->close();
-
-// Fetch workout plans
-$sql_plans = "SELECT * FROM workout_plans WHERE user_id = ?";
-$stmt_plans = $conn->prepare($sql_plans);
-$stmt_plans->bind_param("i", $user_data['table_id']);
-$stmt_plans->execute();
-$result_plans = $stmt_plans->get_result();
-$plans = $result_plans->fetch_all(MYSQLI_ASSOC);
-$stmt_plans->close();
-
-// Fetch exercises for all plans
-$exercises = [];
-if (!empty($plans)) {
-    $plan_ids = array_column($plans, 'plan_id');
-    $placeholders = implode(',', array_fill(0, count($plan_ids), '?'));
-
-    $sql_exercises = "SELECT * FROM workout_plan_exercises WHERE plan_id IN ($placeholders)";
-    $stmt_exercises = $conn->prepare($sql_exercises);
-    $stmt_exercises->bind_param(str_repeat('i', count($plan_ids)), ...$plan_ids);
-    $stmt_exercises->execute();
-    $result_exercises = $stmt_exercises->get_result();
-    $exercises = $result_exercises->fetch_all(MYSQLI_ASSOC);
-    $stmt_exercises->close();
-}
-
-$profile_pic = "../register/uploads/default-avatar.jpg";
-if (!empty($user_data['profile_picture']) && file_exists("../register/uploads/" . $user_data['profile_picture'])) {
-    $profile_pic = "../register/uploads/" . $user_data['profile_picture'];
-}
-
-$hour = date("H");
-$greeting = ($hour >= 5 && $hour < 12) ? "Good morning" : (($hour < 17) ? "Good afternoon" : (($hour < 21) ? "Good evening" : "Good night"));
-?>
+<?php include '../services/workouts-logic.php'?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -60,44 +8,10 @@ $greeting = ($hour >= 5 && $hour < 12) ? "Good morning" : (($hour < 17) ? "Good 
     <title>My Workouts - EliteFit Gym</title>
     <link rel="stylesheet" href="../welcome/welcome-styles.css">
     <link rel="stylesheet" href="../welcome/sidebar-styles.css">
+    <link rel="stylesheet" href="workout-styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        .workouts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 15px;
-        }
-        .plan-card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .plan-card h3 {
-            color: #2c3e50;
-        }
-        .plan-status {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8em;
-        }
-        .status-active {
-            background: #c8e6c9;
-            color: #256029;
-        }
-        .status-completed {
-            background: #ffcdd2;
-            color: #c63737;
-        }
-        .no-workouts {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-    </style>
+    
 </head>
 <body>
     <div class="background"></div>
@@ -178,22 +92,7 @@ $greeting = ($hour >= 5 && $hour < 12) ? "Good morning" : (($hour < 17) ? "Good 
         </div>
     </div>
     <script src="../welcome/sidebar-script.js"></script>
-    <script>
-        document.querySelector('.dropdown-menu').addEventListener('click', function() {
-            this.querySelector('.dropdown-content').classList.toggle('show');
-        });
-        
-        // Close dropdown when clicking outside
-        window.addEventListener('click', function(event) {
-            if (!event.target.matches('.dropdown-menu') && !event.target.matches('.fa-chevron-down')) {
-                const dropdowns = document.querySelectorAll('.dropdown-content');
-                dropdowns.forEach(dropdown => {
-                    if (dropdown.classList.contains('show')) {
-                        dropdown.classList.remove('show');
-                    }
-                });
-            }
-        });
-    </script>
+    <script src="../scripts/background.js"></script>
+    <script src="../scripts/dropdown-menu.js"></script>
 </body>
 </html>

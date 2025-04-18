@@ -1,5 +1,321 @@
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.dashboard-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 60, 114, 0.2);
+}
+
+.card-content {
+  padding: 3px;
+}
+
+/* Enhanced Stat Cards */
+.stat-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+}
+
+.stat-icon {
+  margin-top: 15px;
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* Enhanced User List */
+.user-list {
+  list-style: none;
+  padding: 0;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.user-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.user-item:last-child {
+  border-bottom: none;
+}
+
+.user-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-details {
+  flex-grow: 1;
+}
+
+.user-name {
+  font-weight: 600;
+  margin: 0;
+  font-size: 16px;
+}
+
+.user-email {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  margin: 5px 0 0 0;
+}
+
+.user-date {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  margin-right: 15px;
+}
+
+.user-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.user-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease, transform 0.3s ease;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-actions button:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+/* Enhanced Equipment Status */
+.equipment-status {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+.status-item {
+  text-align: center;
+  padding: 15px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  flex: 1;
+  transition: transform 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-item:hover {
+  transform: translateY(-5px);
+}
+
+.status-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.status-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.available {
+  color: #2ecc71;
+}
+
+.in-use {
+  color: #3498db;
+}
+
+.maintenance {
+  color: #e74c3c;
+}
+
+/* Enhanced Workout Stats */
+.workout-stats {
+  margin-top: 15px;
+}
+
+.workout-item {
+  margin-bottom: 20px;
+}
+
+.workout-bar {
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.workout-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  border-radius: 5px;
+  transition: width 1s ease;
+}
+
+/* Enhanced Event List */
+.event-list {
+  margin-top: 15px;
+}
+
+.event-item {
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: transform 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.event-item:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.event-item h4 {
+  margin: 0;
+  font-size: 16px;
+  color: white;
+}
+
+.event-item span {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.event-item p {
+  margin: 10px 0 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+/* Enhanced Action Buttons */
+.action-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(90deg, #1e3c72, #2a5298);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.action-btn.secondary {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.action-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.action-btn.danger {
+  background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+.action-btn.danger:hover {
+  background: linear-gradient(90deg, #c0392b, #e74c3c);
+}
+
+/* No Data Message */
+.no-data {
+  text-align: center;
+  padding: 30px 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 16px;
+}
+
+.no-data i {
+  font-size: 48px;
+  margin-bottom: 15px;
+  display: block;
+}
+
+/* Admin Banner */
+.admin-banner {
+  background: rgba(30, 60, 114, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
 .equipment-actions {
   display: flex;
   gap: 10px;
-  align-items: center;
+  margin-top: 10px;
 }

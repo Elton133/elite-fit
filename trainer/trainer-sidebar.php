@@ -20,15 +20,15 @@
         </button>
     </div>
     
-    <div class="sidebar-user">
-        <!-- <div class="sidebar-avatar">
+    <!-- <div class="sidebar-user">
+        <div class="sidebar-avatar">
             <img src="<?php echo htmlspecialchars($profile_picture); ?>" alt="Profile Picture">
-        </div> -->
-        <div class="sidebar-user-info">
-            <!-- <h3><?= htmlspecialchars($user_data['first_name'] . ' ' . $user_data['last_name']) ?></h3>
-            <p>Experience Level:<?php echo htmlspecialchars($fitness_data['experience_level'] ?? 'Member'); ?></p> -->
         </div>
-    </div>
+        <div class="sidebar-user-info">
+            <h3><?= htmlspecialchars($user_data['first_name'] . ' ' . $user_data['last_name']) ?></h3> 
+            
+        </div>
+    </div> -->
     
     <nav class="sidebar-nav">
         <ul>
