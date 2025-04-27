@@ -112,7 +112,6 @@ $result = mysqli_query($conn, $workout_query);
                             <option value="">Choose a role</option>
                             <option value="user">Regular User</option>
                             <option value="trainer">Trainer</option>
-                            <option value="admin">Admin</option>
                             <option value="equipment_manager">Equipment Manager</option>
                         </select>
                     </div>

@@ -1,0 +1,84 @@
+/* Basic page setup */
+body {
+  padding: 20px;
+}
+
+/* Role selection cards */
+.role-card {
+  display: inline-block;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  padding: 15px 25px;
+  margin: 10px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.role-card:hover {
+  transform: scale(1.05);
+}
+
+/* Active state */
+.role-card.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #0056b3;
+}
+
+/* Form */
+form {
+  padding: 30px;
+  margin-top: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form input[type="date"],
+form input[type="file"],
+form select,
+form textarea,
+form input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+form textarea {
+  resize: vertical;
+}
+
+/* Hidden fields */
+.hidden {
+  display: none;
+}
+
+/* Submit Button */
+button[type="submit"] {
+  background-color: #28a745;
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #218838;
+}

@@ -72,18 +72,36 @@
         }
         $stmt_active->close();
 
-        // fetch session information
-        $query = "SELECT session_id, user_id, trainer_id, session_date, start_time, end_time, session_type, session_status, notes 
-        FROM training_sessions 
-        WHERE trainer_id = ? 
-        AND session_date >= CURDATE() 
-        ORDER BY session_date ASC, start_time ASC
-        LIMIT 5";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $trainer_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $sessions = $result->fetch_all(MYSQLI_ASSOC);
+$query = "SELECT 
+    ts.session_id, 
+    ts.user_id, 
+    ts.trainer_id, 
+    ts.session_date, 
+    ts.start_time, 
+    ts.end_time, 
+    ts.session_type, 
+    ts.session_status, 
+    ts.notes, 
+    urd.first_name, 
+    urd.last_name, 
+    urd.contact_number, 
+    urd.email, 
+    urd.location, 
+    urd.gender, 
+    urd.profile_picture
+FROM training_sessions ts
+INNER JOIN user_register_details urd ON ts.user_id = urd.table_id
+WHERE ts.trainer_id = ?
+AND ts.session_date >= CURDATE()
+ORDER BY ts.session_date ASC, ts.start_time ASC
+LIMIT 5";
+
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $trainer_data['table_id']);
+$stmt->execute();
+$result = $stmt->get_result();
+$sessions = $result->fetch_all(MYSQLI_ASSOC);
+
 
 
         // Fetch trainer stats

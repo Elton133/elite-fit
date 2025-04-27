@@ -2,7 +2,7 @@
      
      $servername = "localhost";
      $username = "root";
-     $dbpassword = "";
+     $dbpassword = "918273645";
      $dbname = "elitefit";
 
     //  mysqli_connect is a function in php and it takes these parameters

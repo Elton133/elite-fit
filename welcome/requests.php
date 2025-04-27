@@ -38,8 +38,8 @@
             <textarea name="notes" class="form-control" rows="5" required></textarea>
         </div>
         <div class="mb-3">
-            <label>Assign to Trainer (optional)</label>
-            <input type="number" name="trainer_id" class="form-control" placeholder="Trainer ID">
+            <label>Select a trainer</label>
+            <a href="../trainer/trainers.php" class="btn-schedule-now">Select a trainer</a>
         </div>
         <button type="submit" class="btn btn-primary">Send Request</button>
     </form>

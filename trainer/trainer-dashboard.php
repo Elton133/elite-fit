@@ -12,23 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<style>
-    .user-list{
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        text-decoration: none;
-    }
-    .user-actions{
-        display: flex;
-        gap:10px;
-        
-    }
-    .user-actions a{
-        text-decoration: none;
-        
-    }
-</style>
+
 <body>
     <div class="background"></div>
     
@@ -208,43 +192,42 @@
                 </div>
                 
                 <div class="dashboard-card">
-    <div class="card-header">
-        <h3><i class="fas fa-calendar-alt"></i> Upcoming Sessions</h3>
-        <a href="schedule.php" class="view-all">View Schedule</a>
-    </div>
-    <div class="card-content">
-        <div class="class-list">
-            <?php if (count($sessions) > 0): ?>
-                <?php foreach ($sessions as $session): ?>
-                    <?php
-                        $sessionDate = date("Y-m-d");
-                        $dayLabel = $session['session_date'] === $sessionDate ? "Today" :
-                                    ($session['session_date'] === date("Y-m-d", strtotime("+1 day")) ? "Tomorrow" :
-                                    date("D, M j", strtotime($session['session_date'])));
-
-                        // Optional: Get client name (if you have user table)
-                        $userName = "Client #" . $session['user_id'];
-                    ?>
-                    <div class="class-item">
-                        <div class="class-time">
-                            <span class="time"><?php echo date("H:i", strtotime($session['start_time'])); ?></span>
-                            <span class="day"><?php echo $dayLabel; ?></span>
-                        </div>
-                        <div class="class-details">
-                            <h4><?php echo htmlspecialchars($session['session_type']) . " - " . $userName; ?></h4>
-                            <p><?php echo htmlspecialchars($session['notes']); ?></p>
-                        </div>
-                        <button class="book-btn">
-                            <?php echo $session['session_date'] === $sessionDate ? "Start" : "Prepare"; ?>
-                        </button>
+                    <div class="card-header">
+                        <h3><i class="fas fa-calendar-alt"></i> Upcoming Sessions</h3>
+                        <!-- <a href="schedule.php" class="view-all">View Schedule</a> -->
                     </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p style="padding: 1rem;">No upcoming sessions found.</p>
-            <?php endif; ?>
-        </div>
-    </div>
-</div>
+                    <div class="card-content">
+                        <div class="class-list">
+                            <?php if (count($sessions) > 0): ?>
+                                <?php foreach ($sessions as $session): ?>
+                                    <?php
+                                        $sessionDate = date("Y-m-d");
+                                        $dayLabel = $session['session_date'] === $sessionDate ? "Today" :
+                                                    ($session['session_date'] === date("Y-m-d", strtotime("+1 day")) ? "Tomorrow" :
+                                                    date("D, M j", strtotime($session['session_date'])));
+
+                                        $userName = "Client #" . $session['user_id'];
+                                    ?>
+                                    <div class="class-item">
+                                        <div class="class-time">
+                                            <span class="time"><?php echo date("H:i", strtotime($session['start_time'])); ?></span>
+                                            <span class="day"><?php echo $dayLabel; ?></span>
+                                        </div>
+                                        <div class="class-details">
+                                            <h4><?php echo htmlspecialchars($session['session_type']) . " - " . $userName; ?></h4>
+                                            <p><?php echo htmlspecialchars($session['notes']); ?></p>
+                                        </div>
+                                        <button class="book-btn">
+                                            <?php echo $session['session_date'] === $sessionDate ? "Start" : "Prepare"; ?>
+                                        </button>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p style="padding: 1rem;">No upcoming sessions found.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - EliteFit Gym</title>
     <link rel="stylesheet" href="../welcome/welcome-styles.css">
-    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="stylesheet" href="admin-styles.cs">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -24,7 +24,10 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             overflow: hidden;
         }
-        
+        .dashboard-row {
+            display: grid;
+            gap: 30px;
+            }
         .dashboard-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
@@ -382,7 +385,7 @@
                 <p>Welcome to the EliteFit Gym administration panel</p>
             </div>
             <div class="quick-actions">
-                <button class="action-btn"><i class="fas fa-user-plus"></i> Add User</button>
+                <a href="../admin/add-user.php" class="action-btn"><i class="fas fa-user-plus"></i> Add User</a>
                 <button class="action-btn secondary"><i class="fas fa-dumbbell"></i> Add Equipment</button>
                 <button class="action-btn danger"><i class="fas fa-exclamation-triangle"></i> Reports</button>
             </div>

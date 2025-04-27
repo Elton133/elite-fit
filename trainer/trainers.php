@@ -51,9 +51,13 @@
                         </div> -->
                         <div class="trainer-image">
                             <?php 
-                            $profile_pic = "../register/uploads/default-trainer.jpg"; 
-                            if (!empty($trainer['profile_picture']) && file_exists("../register/uploads/" . $trainer['profile_picture'])) {
-                                $profile_pic = "../register/uploads/" . $trainer['profile_picture'];
+                            $profile_pic = "../register/uploads/default-avatar.jpg"; 
+                            if (!empty($trainer['profile_picture'])) {
+                                if (file_exists("../register/uploads/" . $trainer['profile_picture'])) {
+                                    $profile_pic = "../register/uploads/" . $trainer['profile_picture'];
+                                } elseif (file_exists("../register/" . $trainer['profile_picture'])) {
+                                    $profile_pic = "../register/" . $trainer['profile_picture'];
+                                }
                             }
                             ?>
                             <img src="<?php echo htmlspecialchars($profile_pic); ?>" alt="<?php echo htmlspecialchars($trainer['first_name'] . ' ' . $trainer['last_name']); ?>">

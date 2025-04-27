@@ -132,7 +132,7 @@
                     <i class="fas fa-calendar-xmark"></i>
                     <h3>No Sessions Scheduled</h3>
                     <p>You don't have any training sessions scheduled yet.</p>
-                    <a href="trainers.php" class="btn-schedule-now">Schedule Your First Session</a>
+                    <a href="../trainer/trainers.php" class="btn-schedule-now">Schedule Your First Session</a>
                 </div>
             <?php endif; ?>
         </div>

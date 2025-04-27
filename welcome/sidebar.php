@@ -59,7 +59,7 @@
                 </a>
             </li>
             <li>
-                <a href="my-sessions.php">
+                <a href="../welcome/my-sessions.php">
                     <i class="fas fa-users"></i>
                     <span>Sessions</span>
                 </a>
