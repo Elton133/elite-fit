@@ -35,7 +35,7 @@
     <nav class="sidebar-nav">
         <ul>
             <li class="active">
-                <a href="welcome.php">
+                <a href="../welcome/welcome.php">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
@@ -53,7 +53,7 @@
                 </a>
             </li>
             <li>
-                <a href="progress.php">
+                <a href="../workouts/progress.php">
                     <i class="fas fa-chart-line"></i>
                     <span>Progress</span>
                 </a>

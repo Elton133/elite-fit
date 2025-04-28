@@ -1,5 +1,20 @@
+/* Trainer Page Styles */
+:root {
+  --primary-color: #1e3c72;
+  --primary-hover: #2a5298;
+  --accent-color: #1e3c72;
+  --accent-hover: #2a5298;
+  --text-dark: #333;
+  --text-muted: #777;
+  --text-light: #fff;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --status-available: #4caf50;
+  --status-booked: #ff9800;
+  --status-leave: #f44336;
+}
 
-
+/* Page Title */
 .page-title {
   text-align: center;
   margin: 20px 0 30px;
@@ -17,15 +32,17 @@
   opacity: 0.9;
 }
 
-.trainers-container {
+/* Trainers Grid */
+.trainers-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   margin-bottom: 30px;
 }
 
+/* Trainer Card */
 .trainer-card {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: var(--card-bg);
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -38,6 +55,7 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
+/* Trainer Status */
 .trainer-status {
   position: absolute;
   top: 10px;
@@ -51,17 +69,18 @@
 }
 
 .trainer-status.available {
-  background-color: #4caf50;
+  background-color: var(--status-available);
 }
 
 .trainer-status.fully-booked {
-  background-color: #ff9800;
+  background-color: var(--status-booked);
 }
 
 .trainer-status.on-leave {
-  background-color: #f44336;
+  background-color: var(--status-leave);
 }
 
+/* Trainer Image */
 .trainer-image {
   height: 200px;
   overflow: hidden;
@@ -78,54 +97,78 @@
   transform: scale(1.05);
 }
 
+/* Trainer Info */
 .trainer-info {
   padding: 15px;
 }
 
 .trainer-info h3 {
   margin: 0 0 5px;
-  color: #333;
+  color: var(--text-dark);
   font-size: 1.2rem;
 }
 
-.trainer-specialization {
-  color: #e74c3c;
+.trainer-specialty {
+  color: var(--accent-color);
   font-weight: 600;
   margin-bottom: 8px;
 }
 
-.trainer-experience {
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 8px;
-}
-
 .trainer-bio {
-  color: #777;
+  color: var(--text-muted);
   font-size: 0.9rem;
   line-height: 1.4;
   margin-bottom: 15px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
+/* Trainer Meta */
+.trainer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.trainer-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.85rem;
+  color: var(--text-dark);
+}
+
+.trainer-meta span i {
+  color: var(--accent-color);
+}
+
+/* Trainer Actions */
 .trainer-actions {
   display: flex;
-  padding: 0 15px 15px;
+  padding: 0 15px;
   gap: 10px;
 }
 
 .trainer-actions a {
-  flex: 1;
   text-align: center;
-  padding: 8px 0;
+  padding: 8px 4px;
   border-radius: 5px;
   font-weight: 500;
   text-decoration: none;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 15px;
 }
 
 .btn-view-profile {
   background-color: #f8f9fa;
-  color: #333;
+  color: var(--text-dark);
   border: 1px solid #ddd;
 }
 
@@ -133,41 +176,59 @@
   background-color: #e9ecef;
 }
 
-.btn-schedule {
-  background-color: #e74c3c;
+.btn-schedule-now {
+  background-color: var(--accent-color);
   color: white;
 }
 
-.btn-schedule:hover {
-  background-color: #c0392b;
+.btn-schedule-now:hover {
+  background-color: var(--accent-hover);
 }
 
+.btn-select-trainer {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-select-trainer:hover {
+  background-color: var(--primary-hover);
+}
+
+/* No Trainers */
 .no-trainers {
   grid-column: 1 / -1;
   text-align: center;
   padding: 40px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: var(--card-bg);
   border-radius: 10px;
 }
 
 .no-trainers i {
   font-size: 3rem;
-  color: #e74c3c;
+  color: var(--accent-color);
   margin-bottom: 15px;
 }
 
 .no-trainers p {
   font-size: 1.1rem;
-  color: #555;
+  color: var(--text-dark);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .trainers-container {
+  .trainers-grid {
     grid-template-columns: 1fr;
   }
 
   .trainer-card {
     max-width: 100%;
+  }
+
+  .trainer-actions {
+    flex-direction: column;
+  }
+
+  .trainer-actions a {
+    width: 100%;
   }
 }

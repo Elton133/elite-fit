@@ -7,8 +7,10 @@
             header("Location: ../login/index.php");
             exit();
         }
+        
 
         $email = $_SESSION['email'];
+        $trainer_id = $_SESSION['trainer_id'];
         $table_id = $_SESSION['table_id'];
 
         // Fetch trainer data
@@ -33,26 +35,46 @@
             }
         }
         
+       
+
 
         // Fetch pending workout plan requests
-        $sql_pending = "SELECT wr.request_id, wr.user_id, wr.request_date, wr.status, 
-                        u.first_name, u.last_name, u.profile_picture,
-                        ufd.fitness_goal_1, ufd.fitness_goal_2, ufd.fitness_goal_3, ufd.experience_level
+        $pending_requests = [];
+        $sql_pending = "SELECT 
+                            wr.request_id,
+                            wr.user_id,
+                            wr.request_date,
+                            wr.status,
+                            wr.trainer_id,
+                            wr.notes,
+                            u.first_name,
+                            u.last_name,
+                            u.contact_number,
+                            u.email,
+                            u.location,
+                            u.gender,
+                            u.profile_picture,
+                            ufd.fitness_goal_1,
+                            ufd.fitness_goal_2,
+                            ufd.fitness_goal_3,
+                            ufd.experience_level
                         FROM workout_requests wr
                         JOIN user_register_details u ON wr.user_id = u.table_id
                         JOIN user_fitness_details ufd ON wr.user_id = ufd.table_id
-                        WHERE wr.trainer_id = ? AND wr.status = 'pending'
+                        WHERE wr.trainer_id = ?
+                          AND wr.status = 'pending'
                         ORDER BY wr.request_date DESC
                         LIMIT 5";
+        
         $stmt_pending = $conn->prepare($sql_pending);
         $stmt_pending->bind_param("i", $trainer_data['table_id']);
         $stmt_pending->execute();
         $result_pending = $stmt_pending->get_result();
-        $pending_requests = [];
         while ($row = $result_pending->fetch_assoc()) {
             $pending_requests[] = $row;
         }
         $stmt_pending->close();
+        
 
         // Fetch active clients
         $sql_active = "SELECT u.table_id, u.first_name, u.last_name, u.profile_picture,
@@ -95,6 +117,7 @@ WHERE ts.trainer_id = ?
 AND ts.session_date >= CURDATE()
 ORDER BY ts.session_date ASC, ts.start_time ASC
 LIMIT 5";
+
 
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $trainer_data['table_id']);

@@ -10,7 +10,6 @@ function clean_input($data) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // User Registration Details
     $first_name = clean_input($_POST["first_name"]);
     $last_name = clean_input($_POST["last_name"]);
     $contact_number = clean_input($_POST["contact_number"]);
@@ -47,6 +46,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate password strength (example: at least 8 characters)
     if (strlen($user_password) < 8) {
         echo "<script>alert('Password must be at least 8 characters long!'); window.history.back();</script>";
+        exit();
+    }
+
+    // Check if email or contact number already exists in the database
+    $email_check = "SELECT * FROM user_register_details WHERE email = '$email' LIMIT 1";
+    $contact_check = "SELECT * FROM user_register_details WHERE contact_number = '$contact_number' LIMIT 1";
+
+    $email_result = mysqli_query($conn, $email_check);
+    $contact_result = mysqli_query($conn, $contact_check);
+
+    if (mysqli_num_rows($email_result) > 0) {
+        echo "<script>alert('Email already exists! Please use a different email address.'); window.history.back();</script>";
+        exit();
+    }
+
+    if (mysqli_num_rows($contact_result) > 0) {
+        echo "<script>alert('Contact number already exists! Please use a different contact number.'); window.history.back();</script>";
         exit();
     }
 
@@ -136,20 +152,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit();
             }
         }
+
         $login_query = "INSERT INTO user_login_details (username, user_password) VALUES ('$email', '$hashed_password')";
    
-    if (!mysqli_query($conn, $login_query)) {
-        echo "<script>alert('Error creating login credentials: " . mysqli_error($conn) . "'); window.history.back();</script>";
-        exit();
-    }
+        if (!mysqli_query($conn, $login_query)) {
+            echo "<script>alert('Error creating login credentials: " . mysqli_error($conn) . "'); window.history.back();</script>";
+            exit();
+        }
 
-    $trainer_query = "INSERT INTO trainers (first_name, last_name, specialization, experience_years, bio, profile_picture, availability_status)
-VALUES ('$first_name', '$last_name', '$specialization', '$experience_years', '$bio', '$profile_picture', '$availability_status')";
-
-if (!mysqli_query($conn, $trainer_query)) {
-    echo "<script>alert('Error creating login credentials: " . mysqli_error($conn) . "'); window.history.back();</script>";
-    exit();
-}
+        if ($role == 'trainer') {
+            $trainer_query = "INSERT INTO trainers (trainer_id,first_name, last_name, specialization, experience_years, bio, profile_picture, availability_status, email)
+            VALUES ('$user_id','$first_name', '$last_name', '$specialization', '$experience_years', '$bio', '$target_file', '$availability_status', '$email')";
+            
+            if (!mysqli_query($conn, $trainer_query)) {
+                echo "<script>alert('Error creating trainer details: " . mysqli_error($conn) . "'); window.history.back();</script>";
+                exit();
+            }
+        }
 
         echo "<script>alert('Registration successful!'); window.location.href='../login/index.php';</script>";
         exit();

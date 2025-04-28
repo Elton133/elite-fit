@@ -59,7 +59,7 @@
             <li>
                 <a href="classes.php">
                     <i class="fas fa-users"></i>
-                    <span>Classes</span>
+                    <span>Sessions</span>
                 </a>
             </li>
             <li>

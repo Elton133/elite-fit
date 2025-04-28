@@ -30,7 +30,7 @@
 .stat-card {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -303,7 +303,7 @@
 
 /* Admin Banner */
 .admin-banner {
-  background: rgba(30, 60, 114, 0.3);
+  background: rgba(30, 60, 114, 0.5);
   backdrop-filter: blur(10px);
   border-radius: 15px;
   padding: 30px;
