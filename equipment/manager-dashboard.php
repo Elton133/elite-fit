@@ -68,7 +68,7 @@
             </div>
             <div class="quick-actions">
                 <button class="action-btn"><i class="fas fa-plus"></i> Add Equipment</button>
-                <button class="action-btn secondary"><i class="fas fa-tools"></i> Schedule Maintenance</button>
+                <a href="schedule-maintenance.php" class="action-btn secondary"><i class="fas fa-tools"></i> Schedule Maintenance</a>
             </div>
         </div>
         
@@ -202,7 +202,7 @@
                                             <h4><?php echo htmlspecialchars($schedule['name']); ?></h4>
                                             <p><?php echo htmlspecialchars($schedule['type']); ?> - <?php echo htmlspecialchars($schedule['location']); ?></p>
                                         </div>
-                                        <button class="book-btn">Schedule</button>
+                                        <a href="schedule-maintenance.php" class="book-btn">Schedule</a>
                                     </div>
                                 <?php endforeach; ?>
                             </div>

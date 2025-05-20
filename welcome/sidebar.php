@@ -1,4 +1,4 @@
-<?php include '../services/welcome-logic.php'?>
+<?php include '../../elitefit/services/welcome-logic.php'?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +13,7 @@
     <div class="sidebar-header">
         <div class="sidebar-logo">
         <div class="logo-container">
-                <img class="logo-image" src="../register/dumbbell.png" alt="dumbbell">
+                <img class="logo-image" src="../../elitefit/register/dumbbell.png" alt="dumbbell">
             </div>
             <h2>EliteFit<span>Gym</span></h2>
         </div>
@@ -65,7 +65,7 @@
                 </a>
             </li>
             <li>
-                <a href="settings.php">
+                <a href="../settings.php">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </a>

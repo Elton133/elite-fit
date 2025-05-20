@@ -51,7 +51,7 @@
                 </a>
             </li>
             <li>
-                <a href="settings.php">
+                <a href="../settings.php">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </a>

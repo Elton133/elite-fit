@@ -33,13 +33,31 @@
     <nav class="sidebar-nav">
         <ul>
             <li class="active">
-                <a href="welcome.php">
+                <a href="../../elitefit/welcome/welcome.php">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
+            <li >
+                <a href="../../elitefit/equipment/add-equipment.php">
+                    <i class="fas fa-home"></i>
+                    <span>Add Equipment</span>
+                </a>
+            </li>
+            <li >
+                <a href="../../elitefit/equipment/schedule-maintenance.php">
+                    <i class="fas fa-home"></i>
+                    <span>Schedule Maintenance</span>
+                </a>
+            </li>
+            <li >
+                <a href="../../elitefit/equipment/equipment-inventory.php">
+                    <i class="fas fa-home"></i>
+                    <span>Inventory</span>
+                </a>
+            </li>
             <li>
-                <a href="settings.php">
+                <a href="../settings.php">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </a>

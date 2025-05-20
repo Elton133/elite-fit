@@ -867,7 +867,7 @@ $greeting = ($hour >= 5 && $hour < 12) ? "Good morning" : (($hour < 17) ? "Good 
                 workoutSessionForm.querySelector('[name="action"]').value = 'pause';
                 workoutSessionForm.querySelector('[name="duration"]').value = totalSeconds;
                 workoutSessionForm.querySelector('[name="current_exercise"]').value = currentExerciseIndex;
-                workoutSessionForm.submit();
+              
             }
             
             function resumeWorkout() {
@@ -877,7 +877,6 @@ $greeting = ($hour >= 5 && $hour < 12) ? "Good morning" : (($hour < 17) ? "Good 
                 
                 // Update the server that we've resumed
                 workoutSessionForm.querySelector('[name="action"]').value = 'resume';
-                workoutSessionForm.submit();
             }
             
             function completeWorkout() {

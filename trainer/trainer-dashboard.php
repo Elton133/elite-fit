@@ -56,8 +56,8 @@
                 <p>You have <?php echo $trainer_stats['pending_requests']; ?> pending workout plan requests to review today.</p>
             </div>
             <div class="quick-actions">
-                <a href="create-plan.php" class="action-btn"><i class="fas fa-plus"></i> Create Workout Plan</a>
-                <button class="action-btn secondary"><i class="fas fa-calendar-alt"></i> Schedule Session</button>
+                <!-- <a href="create-plan.php" class="action-btn"><i class="fas fa-plus"></i> Create Workout Plan</a> -->
+                <a href="#session-card" class="action-btn secondary"><i class="fas fa-calendar-alt"></i> Scheduled Sessions</a>
             </div>
         </div>
         
@@ -191,7 +191,7 @@
                     </div>
                 </div>
                 
-                <div class="dashboard-card">
+                <div id="session-card" class="dashboard-card">
                     <div class="card-header">
                         <h3><i class="fas fa-calendar-alt"></i> Upcoming Sessions</h3>
                         <!-- <a href="schedule.php" class="view-all">View Schedule</a> -->
@@ -237,7 +237,7 @@
         </footer>
     </div>
     
-    <script src="sidebar-script.js"></script>
+    <script src="../welcome/sidebar-script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="../scripts/background.js"></script>
     <script src="../scripts/dropdown-menu.js"></script>
