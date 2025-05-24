@@ -1,6 +1,6 @@
 <?php
    
-    require_once('../datacon.php');
+    require_once('../elitefit/datacon.php');
 
     // Redirect if session variables are not set
     if (!isset($_SESSION['email']) || !isset($_SESSION['table_id'])) {

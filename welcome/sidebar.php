@@ -1,4 +1,4 @@
-<?php include '../../elitefit/services/welcome-logic.php'?>
+<?php include '../elitefit/services/welcome-logic.php'?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -74,7 +74,7 @@
     </nav>
     
     <div class="sidebar-footer">
-        <a href="../logout.php" class="logout-btn">
+        <a href="../../elitefit/logout.php" class="logout-btn">
             <i class="fas fa-sign-out-alt"></i>
             <span>Logout</span>
         </a>
