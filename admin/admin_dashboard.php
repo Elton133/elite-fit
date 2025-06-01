@@ -370,8 +370,7 @@
                     <div class="dropdown-menu">
                         <i class="fas fa-chevron-down"></i>
                         <div class="dropdown-content">
-                            <a href="#"><i class="fas fa-user-circle"></i> Profile</a>
-                            <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="../settings.php"><i class="fas fa-cog"></i> Settings</a>
                             <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
                         </div>
                     </div>
@@ -386,8 +385,8 @@
             </div>
             <div class="quick-actions">
                 <a href="../admin/add-user.php" class="action-btn"><i class="fas fa-user-plus"></i> Add User</a>
-                <button class="action-btn secondary"><i class="fas fa-dumbbell"></i> Add Equipment</button>
-                <button class="action-btn danger"><i class="fas fa-exclamation-triangle"></i> Reports</button>
+                <a href="../admin/add-equipment.php" class="action-btn secondary"><i class="fas fa-dumbbell"></i> Add Equipment</a>
+                <a href="../admin/reports.php" class="action-btn danger"><i class="fas fa-exclamation-triangle"></i> Reports</a>
             </div>
         </div>
         
@@ -457,11 +456,11 @@
                                         <div class="user-date">
                                             Joined: <?php echo htmlspecialchars($user['join_date']); ?>
                                         </div>
-                                        <div class="user-actions">
+                                        <!-- <div class="user-actions">
                                             <button title="View Profile"><i class="fas fa-eye"></i></button>
                                             <button title="Edit User"><i class="fas fa-edit"></i></button>
                                             <button title="Delete User"><i class="fas fa-trash-alt"></i></button>
-                                        </div>
+                                        </div> -->
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
@@ -538,7 +537,7 @@
                     </div>
                 </div>
                 
-                <div class="dashboard-card">
+                <!-- <div class="dashboard-card">
                     <div class="card-header">
                         <h3><i class="fas fa-calendar-alt"></i> Upcoming Events</h3>
                         <a href="events.php" class="view-all">Manage Events</a>
@@ -574,7 +573,7 @@
                             <button class="action-btn"><i class="fas fa-plus"></i> Add New Event</button>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
         

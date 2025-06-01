@@ -112,14 +112,14 @@
                                 <?php foreach ($pending_requests as $request): ?>
                                     <li class="user-item">
                                         <div class="user-avatar">
-                                            <?php 
-                                            $user_pic = "../register/uploads/default-avatar.jpg";
-                                            if (!empty($request['profile_picture']) && file_exists("../register/uploads/" . $request['profile_picture'])) {
-                                                $user_pic = "../register/uploads/" . $request['profile_picture'];
-                                            }
-                                            ?>
-                                            <img src="<?php echo htmlspecialchars($user_pic); ?>" alt="User Avatar">
-                                        </div>
+                    <img src="<?php echo htmlspecialchars($request['user_profile_pic']); ?>" 
+                         alt="<?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?>" 
+                         onerror="this.src='../register/uploads/default-avatar.jpg'">
+                </div>
+                <div class="user-info">
+                    <h4><?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?></h4>
+                    <p><?php echo htmlspecialchars($request['email']); ?></p>
+                </div>
                                         <div class="user-details">
                                             <h4 class="user-name"><?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?></h4>
                                             <p class="user-email">Goal: <?php echo htmlspecialchars($request['fitness_goal_1']); ?></p>
@@ -154,15 +154,15 @@
                             <ul class="user-list">
                                 <?php foreach ($active_clients as $client): ?>
                                     <li class="user-item">
-                                        <div class="user-avatar">
-                                            <?php 
-                                            $client_pic = "../register/uploads/default-avatar.jpg";
-                                            if (!empty($client['profile_picture']) && file_exists("../register/uploads/" . $client['profile_picture'])) {
-                                                $client_pic = "../register/uploads/" . $client['profile_picture'];
-                                            }
-                                            ?>
-                                            <img src="<?php echo htmlspecialchars($client_pic); ?>" alt="Client Avatar">
-                                        </div>
+                                       <div class="user-avatar">
+                                                <img src="<?php echo htmlspecialchars($client['user_profile_pic']); ?>" 
+                                                    alt="<?php echo htmlspecialchars($client['first_name'] . ' ' . $client['last_name']); ?>" 
+                                                    onerror="this.src='../register/uploads/default-avatar.jpg'">
+                                            </div>
+                                            <div class="client-info">
+                                                <h4><?php echo htmlspecialchars($client['first_name'] . ' ' . $client['last_name']); ?></h4>
+                                                <p><?php echo htmlspecialchars($client['plan_name']); ?></p>
+                                            </div>
                                         <div class="user-details">
                                             <h4 class="user-name"><?php echo htmlspecialchars($client['first_name'] . ' ' . $client['last_name']); ?></h4>
                                             <p class="user-email">Plan: <?php echo htmlspecialchars($client['plan_name']); ?></p>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 include_once '../datacon.php';
+require_once 'email_verification.php'; // Include the email verification class
 
 function clean_input($data) {
     $data = trim($data);
@@ -25,31 +26,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $bio = clean_input($_POST["bio"]);
     $availability_status = clean_input($_POST["availability_status"]);
 
-    // Validate required fields
+    // All your existing validation code remains the same...
     if (empty($first_name) || empty($last_name) || empty($contact_number) || empty($email) || empty($user_password) || empty($location) || empty($gender) || empty($date_of_birth) || empty($role)) {
         echo "<script>alert('Please fill in all required fields!'); window.history.back();</script>";
         exit();
     }
 
-    // Validate email format
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo "<script>alert('Invalid email format!'); window.history.back();</script>";
         exit();
     }
 
-    // Validate contact number format (basic check for digits and length)
     if (!preg_match("/^[0-9]{10}$/", $contact_number)) {
         echo "<script>alert('Invalid contact number format! Please enter a 10-digit number.'); window.history.back();</script>";
         exit();
     }
 
-    // Validate password strength (example: at least 8 characters)
     if (strlen($user_password) < 8) {
         echo "<script>alert('Password must be at least 8 characters long!'); window.history.back();</script>";
         exit();
     }
 
-    // Check if email or contact number already exists in the database
+    // Check if email or contact number already exists
     $email_check = "SELECT * FROM user_register_details WHERE email = '$email' LIMIT 1";
     $contact_check = "SELECT * FROM user_register_details WHERE contact_number = '$contact_number' LIMIT 1";
 
@@ -66,13 +64,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Profile Picture Upload
+    // All your existing file upload code remains the same...
     $target_dir = "uploads/";
     $target_file = $target_dir . basename($profile_picture["name"]);
     $uploadOk = 1;
     $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-    // Check if image file is a actual image or fake image
     $check = getimagesize($profile_picture["tmp_name"]);
     if ($check === false) {
         echo "<script>alert('File is not an image.'); window.history.back();</script>";
@@ -80,21 +77,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Check file size
     if ($profile_picture["size"] > 500000) {
         echo "<script>alert('Sorry, your file is too large.'); window.history.back();</script>";
         $uploadOk = 0;
         exit();
     }
 
-    // Allow certain file formats
     if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
         echo "<script>alert('Sorry, only JPG, JPEG, PNG & GIF files are allowed.'); window.history.back();</script>";
         $uploadOk = 0;
         exit();
     }
 
-    // Check if $uploadOk is set to 0 by an error
     if ($uploadOk == 0) {
         echo "<script>alert('Sorry, your file was not uploaded.'); window.history.back();</script>";
         exit();
@@ -107,22 +101,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // Hash the password
     $hashed_password = password_hash($user_password, PASSWORD_DEFAULT);
-
-    // Convert date of birth to MySQL format
     $dob = date('Y-m-d', strtotime($date_of_birth));
 
-    // Database Insertion
-    $register_query = "INSERT INTO user_register_details (first_name, last_name, contact_number, email, user_password, location, gender, date_of_birth, profile_picture, role)
-    VALUES ('$first_name', '$last_name', '$contact_number', '$email', '$hashed_password', '$location', '$gender', '$dob', '$target_file', '$role')";
+    // Database Insertion - Modified to include email_verified field
+    $register_query = "INSERT INTO user_register_details (first_name, last_name, contact_number, email, user_password, location, gender, date_of_birth, profile_picture, role, email_verified)
+    VALUES ('$first_name', '$last_name', '$contact_number', '$email', '$hashed_password', '$location', '$gender', '$dob', '$target_file', '$role', 0)";
 
     if (mysqli_query($conn, $register_query)) {
-        $user_id = mysqli_insert_id($conn); // Get the last inserted ID
+        $user_id = mysqli_insert_id($conn);
 
-        // Only insert fitness details for regular users
+        // Initialize OTP verification
+        $emailVerification = new EmailVerification($conn);
+        
+        // Generate OTP
+        $otp = $emailVerification->generateOTP();
+        
+        // Store OTP
+        $otpStored = $emailVerification->storeOTP($user_id, $email, $otp);
+        
+        // Send OTP email
+        $emailSent = false;
+        if ($otpStored) {
+            $emailSent = $emailVerification->sendOTPEmail($email, $first_name, $otp);
+        }
+
+        // All your existing fitness details and trainer logic remains the same...
         if ($role === 'user') {
-            // User Fitness Details
             $user_weight = clean_input($_POST["user_weight"]);
             $user_height = clean_input($_POST["user_height"]);
             $user_bodytype = clean_input($_POST["user_bodytype"]);
@@ -130,15 +135,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $workout_2 = clean_input($_POST["preferred_workout_routine_2"]);
             $workout_3 = clean_input($_POST["preferred_workout_routine_3"]);
 
-            // Fitness Goals and Health Details
             $fitness_goal_1 = clean_input($_POST["fitness_goal_1"]);
             $fitness_goal_2 = clean_input($_POST["fitness_goal_2"]);
             $fitness_goal_3 = clean_input($_POST["fitness_goal_3"]);
             $experience_level = clean_input($_POST["experience_level"]);
-            $health_condition = clean_input($_POST["health_condition"]);
-            $health_condition_desc = clean_input($_POST["health_condition_desc"]);
+            $health_condition = clean_input($_POST["health_condition"] ?? '');
+            $health_condition_desc = clean_input($_POST["health_condition_desc"] ?? '');
 
-            // Check if workout routines are unique
             if ($workout_1 == $workout_2 || $workout_1 == $workout_3 || $workout_2 == $workout_3) {
                 echo "<script>alert('You cannot select the same workout routine more than once!'); window.history.back();</script>";
                 exit();
@@ -170,7 +173,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        echo "<script>alert('Registration successful!'); window.location.href='../login/index.php';</script>";
+        // Store email in session and redirect to OTP verification page
+        if ($emailSent) {
+            $_SESSION['verification_email'] = $email;
+            echo "<script>alert('Registration successful! Please check your email for the verification code.'); window.location.href='verify_otp.php';</script>";
+        } else {
+            echo "<script>alert('Registration successful! However, there was an issue sending the verification code. Please contact support.'); window.location.href='../login/index.php';</script>";
+        }
         exit();
     } else {
         echo "<script>alert('Error: " . mysqli_error($conn) . "'); window.history.back();</script>";

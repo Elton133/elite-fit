@@ -1,4 +1,7 @@
-<?php include '../services/equipment-manager-logic.php'?>
+<?php include '../services/equipment-manager-logic.php';
+
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -43,7 +46,11 @@
                 </div>
                 <div class="user-profile">
                     <div class="user-avatar">
-                        <img src="<?php echo htmlspecialchars($profile_pic); ?>" alt="Profile Picture">
+                        <?php 
+                                    // Use the improved profile picture function
+                                    $manager_pic = getProfilePicture($manager_data['profile_picture'] ?? '');
+                                    ?>
+                        <img src="<?php echo htmlspecialchars($manager_pic); ?>" alt="Profile Picture">
                     </div>
                     <div class="user-info">
                         <h3><?= htmlspecialchars($manager_data['first_name'] . ' ' . $manager_data['last_name']) ?></h3>

@@ -458,7 +458,9 @@ if (isset($_POST['delete_user']) && isset($_POST['user_id'])) {
             padding-top: 15px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+        .filter-select option{
+            color: black;
+        }
         @media (max-width: 992px) {
             .users-header {
                 flex-direction: column;
@@ -522,8 +524,7 @@ if (isset($_POST['delete_user']) && isset($_POST['user_id'])) {
                     <div class="dropdown-menu">
                         <i class="fas fa-chevron-down"></i>
                         <div class="dropdown-content">
-                            <a href="#"><i class="fas fa-user-circle"></i> Profile</a>
-                            <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="../settings.php"><i class="fas fa-cog"></i> Settings</a>
                             <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
                         </div>
                     </div>
@@ -544,7 +545,7 @@ if (isset($_POST['delete_user']) && isset($_POST['user_id'])) {
                         
                         <select name="role" class="filter-select">
                             <option value="">All Roles</option>
-                            <option value="member" <?php echo ($role_filter == 'member') ? 'selected' : ''; ?>>Members</option>
+                            <option value="user" <?php echo ($role_filter == 'user') ? 'selected' : ''; ?>>Members</option>
                             <option value="trainer" <?php echo ($role_filter == 'trainer') ? 'selected' : ''; ?>>Trainers</option>
                             <option value="equipment_manager" <?php echo ($role_filter == 'equipment_manager') ? 'selected' : ''; ?>>Equipment Managers</option>
                             <option value="admin" <?php echo ($role_filter == 'admin') ? 'selected' : ''; ?>>Administrators</option>

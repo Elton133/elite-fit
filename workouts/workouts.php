@@ -641,7 +641,7 @@
             </div>
             <div class="quick-actions">
                 <a href="progress.php" class="action-btn"><i class="fas fa-chart-line"></i> View Progress</a>
-                <a href="request-plan.php" class="action-btn secondary"><i class="fas fa-plus"></i> Request New Plan</a>
+                <a href="../welcome/requests.php" class="action-btn secondary"><i class="fas fa-plus"></i> Request New Plan</a>
             </div>
         </div>
 

@@ -39,31 +39,31 @@
                 </a>
             </li>
             <li>
-                <a href="workouts.php">
-                    <i class="fas fa-dumbbell"></i>
-                    <span>Workouts</span>
+                <a href="all-clients.php">
+                    <i class="fas fa-user"></i>
+                    <span>Clients</span>
                 </a>
             </li>
             <li>
-                <a href="nutrition.php">
-                    <i class="fas fa-apple-alt"></i>
-                    <span>Nutrition</span>
+                <a href="all-requests.php">
+                    <i class="fas fa-mail-bulk"></i>
+                    <span>Requests</span>
                 </a>
             </li>
-            <li>
+            <!-- <li>
                 <a href="progress.php">
                     <i class="fas fa-chart-line"></i>
                     <span>Progress</span>
                 </a>
-            </li>
-            <li>
+            </li> -->
+            <!-- <li>
                 <a href="classes.php">
                     <i class="fas fa-users"></i>
                     <span>Sessions</span>
                 </a>
-            </li>
+            </li> -->
             <li>
-                <a href="settings.php">
+                <a href="../settings.php">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </a>

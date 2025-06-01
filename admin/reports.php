@@ -404,8 +404,7 @@ if (isset($_GET['export']) && $_GET['export'] == 'csv') {
                     <div class="dropdown-menu">
                         <i class="fas fa-chevron-down"></i>
                         <div class="dropdown-content">
-                            <a href="#"><i class="fas fa-user-circle"></i> Profile</a>
-                            <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="../settings.php"><i class="fas fa-cog"></i> Settings</a>
                             <a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
                         </div>
                     </div>

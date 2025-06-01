@@ -86,4 +86,30 @@
     } else {
         $greeting = "Good night";
     }
+
+    if (!function_exists('getProfilePicture')) {
+    function getProfilePicture($profile_picture_name) {
+        $default_pic = "../register/uploads/default-avatar.jpg";
+        
+        if (empty($profile_picture_name)) {
+            return $default_pic;
+        }
+        
+        // Check multiple possible paths
+        $possible_paths = [
+            "../register/uploads/" . $profile_picture_name,
+            "../register/" . $profile_picture_name,
+            "uploads/" . $profile_picture_name,
+            $profile_picture_name // In case it's already a full path
+        ];
+        
+        foreach ($possible_paths as $path) {
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+        
+        return $default_pic;
+    }
+}
 ?>

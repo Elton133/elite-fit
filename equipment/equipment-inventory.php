@@ -33,7 +33,7 @@ if (!empty($location_filter)) {
 }
 
 if (!empty($search)) {
-    $sql_conditions[] = "(name LIKE ? OR serial_number LIKE ? OR description LIKE ?)";
+    $sql_conditions[] = "(name LIKE ? OR serial_number LIKE ? OR brand LIKE ?)";
     $search_param = "%$search%";
     $sql_params[] = $search_param;
     $sql_params[] = $search_param;
@@ -140,14 +140,16 @@ mysqli_close($conn);
         .filter-control {
             width: 100%;
             padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.06);
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius-sm);
             color: white;
             font-family: var(--font-family);
             font-size: 14px;
         }
-        
+        .filter-control option{
+            color: #000;
+        }
         .search-group {
             flex: 2;
             min-width: 250px;
@@ -316,7 +318,11 @@ mysqli_close($conn);
                 </div>
                 <div class="user-profile">
                     <div class="user-avatar">
-                        <img src="<?php echo htmlspecialchars($profile_pic); ?>" alt="Profile Picture">
+                        <?php 
+                                    // Use the improved profile picture function
+                                    $manager_pic = getProfilePicture($manager_data['profile_picture'] ?? '');
+                                    ?>
+                        <img src="<?php echo htmlspecialchars($manager_pic); ?>" alt="Profile Picture">
                     </div>
                     <div class="user-info">
                         <h3><?= htmlspecialchars($manager_data['first_name'] . ' ' . $manager_data['last_name']) ?></h3>

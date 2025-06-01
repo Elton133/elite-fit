@@ -34,6 +34,14 @@ if (isset($_GET['error'])) {
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+        .step{
+            color: #fff;
+        }
+        .form-info{
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
     <div class="background"></div>
@@ -52,8 +60,8 @@ if (isset($_GET['error'])) {
                 Toastify({
                     text: "<?php echo addslashes($error_message); ?>",
                     duration: 3000,
-                    gravity: "top", // `top` or `bottom`
-                    position: "right", // `left`, `center` or `right`
+                    gravity: "top", 
+                    position: "right",
                     stopOnFocus: true,
                     close: true,
                     style: {
@@ -90,12 +98,12 @@ if (isset($_GET['error'])) {
                 <div class="form-group">
                     <label>Enter OTP:</label>
                     <div class="otp-input-container">
-                        <input type="text" name="otp_1" class="otp-input" maxlength="1" required>
-                        <input type="text" name="otp_2" class="otp-input" maxlength="1" required>
-                        <input type="text" name="otp_3" class="otp-input" maxlength="1" required>
-                        <input type="text" name="otp_4" class="otp-input" maxlength="1" required>
-                        <input type="text" name="otp_5" class="otp-input" maxlength="1" required>
-                        <input type="text" name="otp_6" class="otp-input" maxlength="1" required>
+                        <input id="otpInput" type="text" name="otp_1" class="otp-input" maxlength="1" required>
+                        <input id="otpInput" type="text" name="otp_2" class="otp-input" maxlength="1" required>
+                        <input id="otpInput" type="text" name="otp_3" class="otp-input" maxlength="1" required>
+                        <input id="otpInput" type="text" name="otp_4" class="otp-input" maxlength="1" required>
+                        <input id="otpInput" type="text" name="otp_5" class="otp-input" maxlength="1" required>
+                        <input id="otpInput" type="text" name="otp_6" class="otp-input" maxlength="1" required>
                     </div>
                 </div>
                 

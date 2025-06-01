@@ -33,21 +33,21 @@
     <nav class="sidebar-nav">
         <ul>
             <li class="active">
-                <a href="welcome.php">
+                <a href="../admin/admin_dashboard.php">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="progress.php">
+                <a href="../admin/all-users.php">
                     <i class="fas fa-chart-line"></i>
-                    <span>Progress</span>
+                    <span>All users</span>
                 </a>
             </li>
             <li>
-                <a href="classes.php">
+                <a href="../admin/reports.php">
                     <i class="fas fa-users"></i>
-                    <span>Classes</span>
+                    <span>Reports</span>
                 </a>
             </li>
             <li>

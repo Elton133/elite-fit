@@ -407,8 +407,12 @@ mysqli_close($conn);
                     <span class="notification-badge"><?php echo count($maintenance_equipment); ?></span>
                 </div>
                 <div class="user-profile">
-                    <div class="user-avatar">
-                        <img src="<?php echo htmlspecialchars($profile_pic); ?>" alt="Profile Picture">
+                     <div class="user-avatar">
+                        <?php 
+                                    // Use the improved profile picture function
+                                    $manager_pic = getProfilePicture($manager_data['profile_picture'] ?? '');
+                                    ?>
+                        <img src="<?php echo htmlspecialchars($manager_pic); ?>" alt="Profile Picture">
                     </div>
                     <div class="user-info">
                         <h3><?= htmlspecialchars($manager_data['first_name'] . ' ' . $manager_data['last_name']) ?></h3>

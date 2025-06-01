@@ -213,7 +213,9 @@ mysqli_close($conn);
             margin-bottom: 5px;
             font-size: 14px;
         }
-        
+        .option-value{
+            color: #000;
+        }
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -249,7 +251,11 @@ mysqli_close($conn);
                 </div>
                 <div class="user-profile">
                     <div class="user-avatar">
-                        <img src="<?php echo htmlspecialchars($profile_pic); ?>" alt="Profile Picture">
+                        <?php 
+                                    // Use the improved profile picture function
+                                    $manager_pic = getProfilePicture($manager_data['profile_picture'] ?? '');
+                                    ?>
+                        <img src="<?php echo htmlspecialchars($manager_pic); ?>" alt="Profile Picture">
                     </div>
                     <div class="user-info">
                         <h3><?= htmlspecialchars($manager_data['first_name'] . ' ' . $manager_data['last_name']) ?></h3>
@@ -308,7 +314,7 @@ mysqli_close($conn);
                                 <select id="equipment_id" name="equipment_id" class="form-control" required>
                                     <option value="">-- Select Equipment --</option>
                                     <?php foreach ($all_equipment as $eq): ?>
-                                        <option value="<?php echo $eq['equipment_id']; ?>">
+                                        <option class="option-value" value="<?php echo $eq['equipment_id']; ?>">
                                             <?php echo htmlspecialchars($eq['name'] . ' (' . $eq['type'] . ' - ' . $eq['location'] . ')'); ?>
                                         </option>
                                     <?php endforeach; ?>

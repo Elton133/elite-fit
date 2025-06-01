@@ -291,6 +291,32 @@ if ($user_role === 'admin') {
 } elseif ($user_role === 'equipment_manager') {
     $sidebar_file = '../elitefit/equipment/equipment-sidebar.php';
 }
+
+  if (!function_exists('getProfilePicture')) {
+    function getProfilePicture($profile_picture_name) {
+        $default_pic = "../register/uploads/default-avatar.jpg";
+        
+        if (empty($profile_picture_name)) {
+            return $default_pic;
+        }
+        
+        // Check multiple possible paths
+        $possible_paths = [
+            "../register/uploads/" . $profile_picture_name,
+            "../register/" . $profile_picture_name,
+            "uploads/" . $profile_picture_name,
+            $profile_picture_name // In case it's already a full path
+        ];
+        
+        foreach ($possible_paths as $path) {
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+        
+        return $default_pic;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -864,7 +890,7 @@ if ($user_role === 'admin') {
                             <form action="settings.php" method="POST" enctype="multipart/form-data">
                                 <div class="profile-picture-container">
                                     <div class="profile-picture">
-                                        <img src="<?php echo htmlspecialchars($profile_pic); ?>" alt="Profile Picture" id="profilePreview">
+                                        <img src="<?php echo htmlspecialchars($user_data['profile_picture'] ?? '../register/uploads/default-avatar.jpg'); ?>" alt="Profile Picture" id="profilePreview">
                                     </div>
                                     <div class="file-upload">
                                         <input type="file" name="profile_picture" id="profilePicture" accept="image/*">

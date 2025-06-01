@@ -31,6 +31,18 @@ if (isset($_GET['sent']) && $_GET['sent'] == 1) {
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+        .step-number, .step-text{
+            color: #fff;
+        }
+        .step-text1{
+            color: #fff;
+            font-size: 12px;
+        }
+        .form-info{
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
     <div class="background"></div>
@@ -49,8 +61,8 @@ if (isset($_GET['sent']) && $_GET['sent'] == 1) {
                 Toastify({
                     text: "<?php echo addslashes($error_message); ?>",
                     duration: 3000,
-                    gravity: "top", // `top` or `bottom`
-                    position: "right", // `left`, `center` or `right`
+                    gravity: "top", 
+                    position: "right", 
                     stopOnFocus: true,
                     close: true,
                     style: {
@@ -67,8 +79,8 @@ if (isset($_GET['sent']) && $_GET['sent'] == 1) {
                 Toastify({
                     text: "<?php echo addslashes($success_message); ?>",
                     duration: 3000,
-                    gravity: "top", // `top` or `bottom`
-                    position: "right", // `left`, `center` or `right`
+                    gravity: "top", 
+                    position: "right", 
                     stopOnFocus: true,
                     close: true,
                     style: {
@@ -82,7 +94,7 @@ if (isset($_GET['sent']) && $_GET['sent'] == 1) {
         <div class="reset-steps">
             <div class="step active">
                 <div class="step-number">1</div>
-                <div class="step-text">Enter Email</div>
+                <div class="step-text1">Enter Email</div>
             </div>
             <div class="step-connector"></div>
             <div class="step">

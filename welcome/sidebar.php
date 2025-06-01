@@ -1,4 +1,4 @@
-<?php include '../elitefit/services/welcome-logic.php'?>
+<?php include '../services/welcome-logic.php'?>
 
 <!DOCTYPE html>
 <html lang="en">
