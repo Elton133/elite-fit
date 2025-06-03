@@ -1,13 +1,35 @@
 <?php
 session_start();
 include_once '../datacon.php';
-require_once 'email_verification.php'; // Include the email verification class
+require_once 'email_verification.php';
 
 function clean_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     return $data;
+}
+
+function showToastAndRedirect($message, $type = 'success', $redirectUrl = '../login/index.php') {
+    echo "<script>
+        localStorage.setItem('toastMessage', '$message');
+        localStorage.setItem('toastType', '$type');
+        setTimeout(function() {
+            window.location.href = '$redirectUrl';
+        }, 100);
+    </script>";
+    exit();
+}
+
+function showToastAndGoBack($message, $type = 'error') {
+    echo "<script>
+        localStorage.setItem('toastMessage', '$message');
+        localStorage.setItem('toastType', '$type');
+        setTimeout(function() {
+            window.history.back();
+        }, 100);
+    </script>";
+    exit();
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -26,45 +48,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $bio = clean_input($_POST["bio"]);
     $availability_status = clean_input($_POST["availability_status"]);
 
-    // All your existing validation code remains the same...
+    // Validation with toast messages
     if (empty($first_name) || empty($last_name) || empty($contact_number) || empty($email) || empty($user_password) || empty($location) || empty($gender) || empty($date_of_birth) || empty($role)) {
-        echo "<script>alert('Please fill in all required fields!'); window.history.back();</script>";
-        exit();
+        showToastAndGoBack('Please fill in all required fields!');
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "<script>alert('Invalid email format!'); window.history.back();</script>";
-        exit();
+        showToastAndGoBack('Invalid email format!');
     }
 
     if (!preg_match("/^[0-9]{10}$/", $contact_number)) {
-        echo "<script>alert('Invalid contact number format! Please enter a 10-digit number.'); window.history.back();</script>";
-        exit();
+        showToastAndGoBack('Invalid contact number format! Please enter a 10-digit number.');
     }
 
     if (strlen($user_password) < 8) {
-        echo "<script>alert('Password must be at least 8 characters long!'); window.history.back();</script>";
-        exit();
+        showToastAndGoBack('Password must be at least 8 characters long!');
     }
 
     // Check if email or contact number already exists
-    $email_check = "SELECT * FROM user_register_details WHERE email = '$email' LIMIT 1";
-    $contact_check = "SELECT * FROM user_register_details WHERE contact_number = '$contact_number' LIMIT 1";
+    $email_check = "SELECT * FROM user_register_details WHERE email = ? LIMIT 1";
+    $contact_check = "SELECT * FROM user_register_details WHERE contact_number = ? LIMIT 1";
 
-    $email_result = mysqli_query($conn, $email_check);
-    $contact_result = mysqli_query($conn, $contact_check);
+    $email_stmt = mysqli_prepare($conn, $email_check);
+    mysqli_stmt_bind_param($email_stmt, "s", $email);
+    mysqli_stmt_execute($email_stmt);
+    $email_result = mysqli_stmt_get_result($email_stmt);
+
+    $contact_stmt = mysqli_prepare($conn, $contact_check);
+    mysqli_stmt_bind_param($contact_stmt, "s", $contact_number);
+    mysqli_stmt_execute($contact_stmt);
+    $contact_result = mysqli_stmt_get_result($contact_stmt);
 
     if (mysqli_num_rows($email_result) > 0) {
-        echo "<script>alert('Email already exists! Please use a different email address.'); window.history.back();</script>";
-        exit();
+        showToastAndGoBack('Email already exists! Please use a different email address.');
     }
 
     if (mysqli_num_rows($contact_result) > 0) {
-        echo "<script>alert('Contact number already exists! Please use a different contact number.'); window.history.back();</script>";
-        exit();
+        showToastAndGoBack('Contact number already exists! Please use a different contact number.');
     }
 
-    // All your existing file upload code remains the same...
+    // File upload validation with toast messages
     $target_dir = "uploads/";
     $target_file = $target_dir . basename($profile_picture["name"]);
     $uploadOk = 1;
@@ -72,43 +95,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $check = getimagesize($profile_picture["tmp_name"]);
     if ($check === false) {
-        echo "<script>alert('File is not an image.'); window.history.back();</script>";
-        $uploadOk = 0;
-        exit();
+        showToastAndGoBack('File is not an image.');
     }
 
     if ($profile_picture["size"] > 500000) {
-        echo "<script>alert('Sorry, your file is too large.'); window.history.back();</script>";
-        $uploadOk = 0;
-        exit();
+        showToastAndGoBack('Sorry, your file is too large.');
     }
 
     if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-        echo "<script>alert('Sorry, only JPG, JPEG, PNG & GIF files are allowed.'); window.history.back();</script>";
-        $uploadOk = 0;
-        exit();
+        showToastAndGoBack('Sorry, only JPG, JPEG, PNG & GIF files are allowed.');
     }
 
     if ($uploadOk == 0) {
-        echo "<script>alert('Sorry, your file was not uploaded.'); window.history.back();</script>";
-        exit();
+        showToastAndGoBack('Sorry, your file was not uploaded.');
     } else {
-        if (move_uploaded_file($profile_picture["tmp_name"], $target_file)) {
-            //echo "The file ". htmlspecialchars( basename( $_FILES["profile_picture"]["name"])). " has been uploaded.";
-        } else {
-            echo "<script>alert('Sorry, there was an error uploading your file.'); window.history.back();</script>";
-            exit();
+        if (!move_uploaded_file($profile_picture["tmp_name"], $target_file)) {
+            showToastAndGoBack('Sorry, there was an error uploading your file.');
         }
     }
 
     $hashed_password = password_hash($user_password, PASSWORD_DEFAULT);
     $dob = date('Y-m-d', strtotime($date_of_birth));
 
-    // Database Insertion - Modified to include email_verified field
+    // Database Insertion with prepared statements
     $register_query = "INSERT INTO user_register_details (first_name, last_name, contact_number, email, user_password, location, gender, date_of_birth, profile_picture, role, email_verified)
-    VALUES ('$first_name', '$last_name', '$contact_number', '$email', '$hashed_password', '$location', '$gender', '$dob', '$target_file', '$role', 0)";
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
 
-    if (mysqli_query($conn, $register_query)) {
+    $stmt = mysqli_prepare($conn, $register_query);
+    mysqli_stmt_bind_param($stmt, "ssssssssss", $first_name, $last_name, $contact_number, $email, $hashed_password, $location, $gender, $dob, $target_file, $role);
+
+    if (mysqli_stmt_execute($stmt)) {
         $user_id = mysqli_insert_id($conn);
 
         // Initialize OTP verification
@@ -126,7 +142,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $emailSent = $emailVerification->sendOTPEmail($email, $first_name, $otp);
         }
 
-        // All your existing fitness details and trainer logic remains the same...
+        // Handle user fitness details
         if ($role === 'user') {
             $user_weight = clean_input($_POST["user_weight"]);
             $user_height = clean_input($_POST["user_height"]);
@@ -143,47 +159,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $health_condition_desc = clean_input($_POST["health_condition_desc"] ?? '');
 
             if ($workout_1 == $workout_2 || $workout_1 == $workout_3 || $workout_2 == $workout_3) {
-                echo "<script>alert('You cannot select the same workout routine more than once!'); window.history.back();</script>";
-                exit();
+                showToastAndGoBack('You cannot select the same workout routine more than once!');
             }
 
             $fitness_query = "INSERT INTO user_fitness_details (table_id, user_weight, user_height, user_bodytype, preferred_workout_routine_1, preferred_workout_routine_2, preferred_workout_routine_3, fitness_goal_1, fitness_goal_2, fitness_goal_3, experience_level, health_condition, health_condition_desc)
-                VALUES ('$user_id', '$user_weight', '$user_height', '$user_bodytype', '$workout_1', '$workout_2', '$workout_3', '$fitness_goal_1', '$fitness_goal_2', '$fitness_goal_3', '$experience_level', '$health_condition', '$health_condition_desc')";
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-            if (!mysqli_query($conn, $fitness_query)) {
-                echo "<script>alert('Error saving fitness details: " . mysqli_error($conn) . "'); window.history.back();</script>";
-                exit();
+            $fitness_stmt = mysqli_prepare($conn, $fitness_query);
+            mysqli_stmt_bind_param($fitness_stmt, "issssssssssss", $user_id, $user_weight, $user_height, $user_bodytype, $workout_1, $workout_2, $workout_3, $fitness_goal_1, $fitness_goal_2, $fitness_goal_3, $experience_level, $health_condition, $health_condition_desc);
+
+            if (!mysqli_stmt_execute($fitness_stmt)) {
+                showToastAndGoBack('Error saving fitness details: ' . mysqli_error($conn));
             }
         }
 
-        $login_query = "INSERT INTO user_login_details (username, user_password) VALUES ('$email', '$hashed_password')";
+        // Create login credentials
+        $login_query = "INSERT INTO user_login_details (username, user_password) VALUES (?, ?)";
+        $login_stmt = mysqli_prepare($conn, $login_query);
+        mysqli_stmt_bind_param($login_stmt, "ss", $email, $hashed_password);
    
-        if (!mysqli_query($conn, $login_query)) {
-            echo "<script>alert('Error creating login credentials: " . mysqli_error($conn) . "'); window.history.back();</script>";
-            exit();
+        if (!mysqli_stmt_execute($login_stmt)) {
+            showToastAndGoBack('Error creating login credentials: ' . mysqli_error($conn));
         }
 
+        // Handle trainer details
         if ($role == 'trainer') {
-            $trainer_query = "INSERT INTO trainers (trainer_id,first_name, last_name, specialization, experience_years, bio, profile_picture, availability_status, email)
-            VALUES ('$user_id','$first_name', '$last_name', '$specialization', '$experience_years', '$bio', '$target_file', '$availability_status', '$email')";
+            $trainer_query = "INSERT INTO trainers (trainer_id, first_name, last_name, specialization, experience_years, bio, profile_picture, availability_status, email)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             
-            if (!mysqli_query($conn, $trainer_query)) {
-                echo "<script>alert('Error creating trainer details: " . mysqli_error($conn) . "'); window.history.back();</script>";
-                exit();
+            $trainer_stmt = mysqli_prepare($conn, $trainer_query);
+            mysqli_stmt_bind_param($trainer_stmt, "issssisss", $user_id, $first_name, $last_name, $specialization, $experience_years, $bio, $target_file, $availability_status, $email);
+            
+            if (!mysqli_stmt_execute($trainer_stmt)) {
+                showToastAndGoBack('Error creating trainer details: ' . mysqli_error($conn));
             }
         }
 
-        // Store email in session and redirect to OTP verification page
+        // Final success handling
         if ($emailSent) {
             $_SESSION['verification_email'] = $email;
-            echo "<script>alert('Registration successful! Please check your email for the verification code.'); window.location.href='verify_otp.php';</script>";
+            echo "<script>
+                localStorage.setItem('toastMessage', 'Registration successful! Please check your email for the verification code.');
+                localStorage.setItem('toastType', 'success');
+                setTimeout(function() {
+                    window.location.href = 'verify_otp.php';
+                }, 1500);
+            </script>";
         } else {
-            echo "<script>alert('Registration successful! However, there was an issue sending the verification code. Please contact support.'); window.location.href='../login/index.php';</script>";
+            showToastAndRedirect('Registration successful! However, there was an issue sending the verification code. Please contact support.', 'warning');
         }
         exit();
     } else {
-        echo "<script>alert('Error: " . mysqli_error($conn) . "'); window.history.back();</script>";
-        exit();
+        showToastAndGoBack('Error: ' . mysqli_error($conn));
     }
 
     mysqli_close($conn);

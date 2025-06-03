@@ -233,7 +233,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (in_array(strtolower($filetype), $allowed)) {
                 // Create unique filename
                 $new_filename = uniqid() . '.' . $filetype;
-                $upload_path = "../register/uploads/" . $new_filename;
+                $upload_path = "./register/uploads/" . $new_filename;
                 
                 // Move uploaded file
                 if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $upload_path)) {
@@ -246,7 +246,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         
                         // Delete old profile picture if it's not the default
                         if ($user_data['profile_picture'] != 'default-avatar.jpg' && file_exists("../register/uploads/" . $user_data['profile_picture'])) {
-                            unlink("../register/uploads/" . $user_data['profile_picture']);
+                            unlink("./register/uploads/" . $user_data['profile_picture']);
                         }
                         
                         // Refresh user data
@@ -271,12 +271,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Get profile picture path
-$profile_pic = "../register/uploads/default-avatar.jpg";
+$profile_pic = "./register/uploads/default-avatar.jpg";
 if (!empty($user_data['profile_picture'])) {
-    if (file_exists("../register/uploads/" . $user_data['profile_picture'])) {
-        $profile_pic = "../register/uploads/" . $user_data['profile_picture'];
-    } elseif (file_exists("../register/" . $user_data['profile_picture'])) {
-        $profile_pic = "../register/" . $user_data['profile_picture'];
+    if (file_exists("./register/uploads/" . $user_data['profile_picture'])) {
+        $profile_pic = "./register/uploads/" . $user_data['profile_picture'];
+    } elseif (file_exists("./register/" . $user_data['profile_picture'])) {
+        $profile_pic = "./register/" . $user_data['profile_picture'];
     }
 }
 

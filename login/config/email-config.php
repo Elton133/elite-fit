@@ -4,10 +4,10 @@
 
 define('EMAIL_METHOD', 'phpmailer');
 define('SMTP_HOST', 'smtp.gmail.com');
-define('SMTP_PORT', 587);
+define('SMTP_PORT', 465);
 define('SMTP_USERNAME', 'eltonmorden029@gmail.com'); 
-define('SMTP_PASSWORD', 'kuvgzbgicognutho'); 
-define('SMTP_ENCRYPTION', 'tls');
+define('SMTP_PASSWORD', 'qbmx havj kmwx wcug'); 
+define('SMTP_ENCRYPTION', 'ssl');
 define('FROM_EMAIL', 'noreply@elitefit.com');
 define('FROM_NAME', 'EliteFit Gym');
 define('OTP_EXPIRY_MINUTES', 5);

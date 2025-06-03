@@ -3,7 +3,7 @@
 
 session_start();
 require_once 'email_verification.php';
-include_once 'datacon.php';
+include_once '../datacon.php';
 
 $emailVerification = new EmailVerification($conn);
 $message = '';
@@ -11,7 +11,7 @@ $success = false;
 
 // Check if user came from registration
 if (!isset($_SESSION['verification_email'])) {
-    header('Location: register/index.php');
+    header('Location: ../login/index.php');
     exit();
 }
 
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         body {
-            font-family: "Poppins", sans-serif;
+            font-family: "Fredoka", sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
@@ -68,7 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             align-items: center;
             min-height: 100vh;
             width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+           background-image: url("https://plus.unsplash.com/premium_photo-1661265933107-85a5dbd815af?q=80&w=2018&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+            background-size: cover;
+            background-position: center;
             color: #333;
         }
 
@@ -288,7 +290,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if ($success): ?>
             <script>
                 setTimeout(function() {
-                    window.location.href = 'login/index.php';
+                    window.location.href = '../login/index.php';
                 }, 2000);
             </script>
         <?php else: ?>

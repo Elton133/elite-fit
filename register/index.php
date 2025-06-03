@@ -22,8 +22,41 @@ $result = mysqli_query($conn, $workout_query);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+        <!-- Add this to your HTML head or main layout -->
+
+
+<style>
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.toast {
+    background: #333;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast.success { background: #28a745; }
+.toast.error { background: #dc3545; }
+.toast.warning { background: #ffc107; color: #000; }
+.toast.info { background: #17a2b8; }
+</style>
 </head>
 <body>
+    <div id="toast-container"></div>
     <div class="background"></div>
     <div class="form-container">
         <div class="form-header">
@@ -321,6 +354,39 @@ $result = mysqli_query($conn, $workout_query);
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script src="../scripts/background.js"></script>
     <script src="../scripts/register.js"></script>
+
+
+<script>
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    
+    container.appendChild(toast);
+    
+    // Trigger animation
+    setTimeout(() => toast.classList.add('show'), 100);
+    
+    // Remove after 4 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => container.removeChild(toast), 300);
+    }, 4000);
+}
+
+// Check for stored toast messages on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const toastMessage = localStorage.getItem('toastMessage');
+    const toastType = localStorage.getItem('toastType') || 'success';
+    
+    if (toastMessage) {
+        showToast(toastMessage, toastType);
+        localStorage.removeItem('toastMessage');
+        localStorage.removeItem('toastType');
+    }
+});
+</script>
 
 
 </body>

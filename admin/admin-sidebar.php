@@ -45,6 +45,12 @@
                 </a>
             </li>
             <li>
+                <a href="../admin/all-equipments.php">
+                    <i class="fas fa-chart-line"></i>
+                    <span>All equipments</span>
+                </a>
+            </li>
+            <li>
                 <a href="../admin/reports.php">
                     <i class="fas fa-users"></i>
                     <span>Reports</span>

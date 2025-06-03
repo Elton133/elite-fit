@@ -33,7 +33,7 @@
     <nav class="sidebar-nav">
         <ul>
             <li class="active">
-                <a href="../../elitefit/welcome/welcome.php">
+                <a href="../../elitefit/equipment/manager-dashboard.php">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
@@ -56,12 +56,12 @@
                     <span>Inventory</span>
                 </a>
             </li>
-            <li>
+            <!-- <li>
                 <a href="../settings.php">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </a>
-            </li>
+            </li> -->
         </ul>
     </nav>
     

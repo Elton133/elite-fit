@@ -30,7 +30,7 @@
         }
     }
 
-    // Equipment addition logic (adapted from equipment manager)
+    // Equipment addition logic
     $equipment_name = $equipment_type = $brand = $model = $serial_number = $purchase_date = $location = '';
     $status = 'available'; // default status
     $maintenance_notes = $last_maintenance_date = $next_maintenance_date = '';
@@ -155,24 +155,16 @@
         'total' => 0
     ];
 
-    // Fetch workout plan statistics
-    $sql_workout_stats = "SELECT wp.workout_name, COUNT(ufd.table_id) as user_count
-                        FROM workout_plan wp
-                        LEFT JOIN (
-                            SELECT table_id, preferred_workout_routine_1 as routine FROM user_fitness_details
-                            UNION ALL
-                            SELECT table_id, preferred_workout_routine_2 as routine FROM user_fitness_details
-                            UNION ALL
-                            SELECT table_id, preferred_workout_routine_3 as routine FROM user_fitness_details
-                        ) ufd ON wp.table_id = ufd.routine
-                        GROUP BY wp.workout_name
-                        ORDER BY user_count DESC
-                        LIMIT 5";
-    $result_workout_stats = $conn->query($sql_workout_stats);
-    $workout_stats = [];
-    if ($result_workout_stats) {
-        while ($row = $result_workout_stats->fetch_assoc()) {
-            $workout_stats[] = $row;
+    // Fetch recent equipment (5 most recent)
+    $sql_recent_equipment = "SELECT equipment_id, name, type, location, status, purchase_date
+                            FROM equipment_inventory 
+                            ORDER BY equipment_id DESC 
+                            LIMIT 5";
+    $result_recent_equipment = $conn->query($sql_recent_equipment);
+    $recent_equipment = [];
+    if ($result_recent_equipment && $result_recent_equipment->num_rows > 0) {
+        while ($row = $result_recent_equipment->fetch_assoc()) {
+            $recent_equipment[] = $row;
         }
     }
 
@@ -201,97 +193,475 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .equipment-form-container {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            margin-top: 20px;
+        /* Enhanced Dashboard Styles */
+        .dashboard-container {
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
-        
-        .form-group {
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .dashboard-title h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background:white;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dashboard-title p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+        }
+
+        .dashboard-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Enhanced Form Styles */
+        .equipment-form-container {
+            background: rgba(40, 40, 40, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-header h3 {
+            font-size: 24px;
+            margin: 0;
+            color: white;
+        }
+
+        .form-header .form-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        
+
+        .form-section-title i {
+            color: #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
         .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
             color: white;
+            font-size: 14px;
         }
-        
+
+        .form-group label .required {
+            color: #e74c3c;
+            margin-left: 3px;
+        }
+
         .form-control {
             width: 100%;
-            padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: var(--border-radius-sm);
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             color: white;
             font-family: var(--font-family);
             font-size: 16px;
-            transition: all var(--transition-normal);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
         }
-        
+
         .form-control:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #667eea;
             outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
         }
-        
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 25px;
         }
-        
-        .error-message {
-            background: rgba(231, 76, 60, 0.2);
-            border-left: 4px solid #e74c3c;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: var(--border-radius-sm);
-            color: #fff;
+
+        .form-row-triple {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 25px;
         }
-        
-        .success-message {
-            background: rgba(46, 204, 113, 0.2);
-            border-left: 4px solid #2ecc71;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: var(--border-radius-sm);
-            color: #fff;
+
+        /* Enhanced Button Styles */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-family: var(--font-family);
+            font-size: 14px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
         }
-        
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+        }
+
         .toggle-form-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: var(--border-radius-sm);
+            padding: 15px 30px;
+            border-radius: 50px;
             cursor: pointer;
             font-family: var(--font-family);
-            font-weight: 500;
-            transition: all var(--transition-normal);
-            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
-        
+
         .toggle-form-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
-        
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Enhanced Alert Styles */
+        .alert {
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 4px solid;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .alert-error {
+            background: rgba(231, 76, 60, 0.15);
+            border-left-color: #e74c3c;
+            color: #fff;
+        }
+
+        .alert-success {
+            background: rgba(46, 204, 113, 0.15);
+            border-left-color: #2ecc71;
+            color: #fff;
+        }
+
+        .alert-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .alert-content h4 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .alert-content ul {
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+        }
+
+        .alert-content li {
+            margin-bottom: 5px;
+        }
+
+        /* Enhanced Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(40, 40, 40, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #1e3c72, #2a5298);;
+        }
+
+        .stat-content h3 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .stat-content p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Equipment Form Toggle */
         .equipment-form {
             display: none;
+            animation: slideDown 0.3s ease-out;
         }
-        
+
         .equipment-form.active {
             display: block;
         }
-        
-        @media (max-width: 768px) {
-            .form-row {
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Recent Equipment Table */
+        .recent-equipment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .recent-equipment-table th {
+            text-align: left;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            color: white;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+        }
+
+        .recent-equipment-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+        }
+
+        .recent-equipment-table tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .equipment-status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-available {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+
+        .status-in_use {
+            background: rgba(241, 196, 15, 0.2);
+            color: #f1c40f;
+        }
+
+        .status-maintenance {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .dashboard-actions {
+                width: 100%;
+            }
+
+            .form-row, .form-row-triple {
                 grid-template-columns: 1fr;
-                gap: 15px;
+                gap: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 20px;
+                margin: 20px 0;
+            }
+
+            .equipment-form-container {
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
@@ -338,8 +708,8 @@
             <p>Welcome to your admin dashboard. Here's an overview of your gym's performance.</p>
         </div>
         
-        <!-- Stats Cards -->
-        <div class="stats-grid">
+        <!-- Enhanced Stats Cards -->
+        <!-- <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
                     <i class="fas fa-users"></i>
@@ -379,48 +749,88 @@
                     <p>Total Equipment</p>
                 </div>
             </div>
-        </div>
+        </div> -->
         
-        <!-- Equipment Management Section -->
-        <div class="dashboard-card">
-            <div class="card-header">
-                <h3><i class="fas fa-plus-circle"></i> Equipment Management</h3>
+        <!-- Enhanced Equipment Management Section -->
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <h2><i class="fas fa-plus-circle"></i> Equipment Management</h2>
+                    <p>Add and manage gym equipment efficiently</p>
+                </div>
+                <div class="dashboard-actions">
+                    <a href="all-equipments.php" class="btn btn-secondary">
+                        <i class="fas fa-list"></i> View All Equipment
+                    </a>
+                </div>
             </div>
-            <div class="card-content">
-                <button type="button" class="toggle-form-btn" onclick="toggleEquipmentForm()">
-                    <i class="fas fa-plus"></i> Add New Equipment
-                </button>
-                
-                <div class="equipment-form-container equipment-form" id="equipmentForm">
-                    <?php if (!empty($equipment_errors)): ?>
-                        <div class="error-message">
-                            <strong>Please correct the following errors:</strong>
+            
+            <button type="button" class="toggle-form-btn" onclick="toggleEquipmentForm()">
+                <i class="fas fa-plus"></i> Add New Equipment
+            </button>
+            
+            <div class="equipment-form-container equipment-form" id="equipmentForm">
+                <div class="form-header">
+                    <div class="form-icon">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <div>
+                        <h3>Add New Equipment</h3>
+                        <p style="color: rgba(255, 255, 255, 0.7); margin: 0;">Fill in the equipment details below</p>
+                    </div>
+                </div>
+
+                <?php if (!empty($equipment_errors)): ?>
+                    <div class="alert alert-error">
+                        <div class="alert-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="alert-content">
+                            <h4>Please correct the following errors:</h4>
                             <ul>
                                 <?php foreach ($equipment_errors as $error): ?>
                                     <li><?php echo htmlspecialchars($error); ?></li>
                                 <?php endforeach; ?>
                             </ul>
                         </div>
-                    <?php endif; ?>
-                    
-                    <?php if ($equipment_success): ?>
-                        <div class="success-message">
-                            <strong>Success!</strong> The equipment has been added successfully.
+                    </div>
+                <?php endif; ?>
+                
+                <?php if ($equipment_success): ?>
+                    <div class="alert alert-success">
+                        <div class="alert-icon">
+                            <i class="fas fa-check-circle"></i>
                         </div>
-                    <?php endif; ?>
+                        <div class="alert-content">
+                            <h4>Success!</h4>
+                            <p>The equipment has been added successfully.</p>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                
+                <form method="post" action="">
+                    <input type="hidden" name="add_equipment" value="1">
                     
-                    <form method="post" action="">
-                        <input type="hidden" name="add_equipment" value="1">
+                    <!-- Basic Information Section -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="fas fa-info-circle"></i>
+                            Basic Information
+                        </div>
                         
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="equipment_name">Equipment Name *</label>
-                                <input type="text" id="equipment_name" name="equipment_name" class="form-control" value="<?php echo htmlspecialchars($equipment_name); ?>" required>
+                                <label for="equipment_name">Equipment Name<span class="required">*</span></label>
+                                <input type="text" id="equipment_name" name="equipment_name" class="form-control" 
+                                       value="<?php echo htmlspecialchars($equipment_name); ?>" 
+                                       placeholder="Enter equipment name" required>
                             </div>
 
                             <div class="form-group">
-                                <label for="equipment_type">Equipment Type *</label>
-                                <input type="text" id="equipment_type" name="equipment_type" class="form-control" value="<?php echo htmlspecialchars($equipment_type); ?>" list="equipment-types" required>
+                                <label for="equipment_type">Equipment Type<span class="required">*</span></label>
+                                <input type="text" id="equipment_type" name="equipment_type" class="form-control" 
+                                       value="<?php echo htmlspecialchars($equipment_type); ?>" 
+                                       list="equipment-types" placeholder="Select or enter type" required>
                                 <datalist id="equipment-types">
                                     <?php foreach ($equipment_types as $eq_type): ?>
                                         <option value="<?php echo htmlspecialchars($eq_type); ?>">
@@ -432,36 +842,39 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="brand">Brand</label>
-                                <input type="text" id="brand" name="brand" class="form-control" value="<?php echo htmlspecialchars($brand); ?>">
+                                <input type="text" id="brand" name="brand" class="form-control" 
+                                       value="<?php echo htmlspecialchars($brand); ?>" 
+                                       placeholder="Equipment brand">
                             </div>
 
                             <div class="form-group">
                                 <label for="model">Model</label>
-                                <input type="text" id="model" name="model" class="form-control" value="<?php echo htmlspecialchars($model); ?>">
+                                <input type="text" id="model" name="model" class="form-control" 
+                                       value="<?php echo htmlspecialchars($model); ?>" 
+                                       placeholder="Equipment model">
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-row">
+                    <!-- Technical Details Section -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="fas fa-cog"></i>
+                            Technical Details
+                        </div>
+                        
+                        <div class="form-row-triple">
                             <div class="form-group">
                                 <label for="serial_number">Serial Number</label>
-                                <input type="text" id="serial_number" name="serial_number" class="form-control" value="<?php echo htmlspecialchars($serial_number); ?>">
+                                <input type="text" id="serial_number" name="serial_number" class="form-control" 
+                                       value="<?php echo htmlspecialchars($serial_number); ?>" 
+                                       placeholder="Serial number">
                             </div>
 
                             <div class="form-group">
                                 <label for="purchase_date">Purchase Date</label>
-                                <input type="date" id="purchase_date" name="purchase_date" class="form-control" value="<?php echo htmlspecialchars($purchase_date); ?>">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="location">Location *</label>
-                                <input type="text" id="location" name="location" class="form-control" value="<?php echo htmlspecialchars($location); ?>" list="locations" required>
-                                <datalist id="locations">
-                                    <?php foreach ($locations as $loc): ?>
-                                        <option value="<?php echo htmlspecialchars($loc); ?>">
-                                    <?php endforeach; ?>
-                                </datalist>
+                                <input type="date" id="purchase_date" name="purchase_date" class="form-control" 
+                                       value="<?php echo htmlspecialchars($purchase_date); ?>">
                             </div>
 
                             <div class="form-group">
@@ -475,70 +888,148 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="location">Location<span class="required">*</span></label>
+                            <input type="text" id="location" name="location" class="form-control" 
+                                   value="<?php echo htmlspecialchars($location); ?>" 
+                                   list="locations" placeholder="Select or enter location" required>
+                            <datalist id="locations">
+                                <?php foreach ($locations as $loc): ?>
+                                    <option value="<?php echo htmlspecialchars($loc); ?>">
+                                <?php endforeach; ?>
+                            </datalist>
+                        </div>
+                    </div>
+
+                    <!-- Maintenance Section -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="fas fa-wrench"></i>
+                            Maintenance Information
+                        </div>
+                        
+                        <div class="form-group">
                             <label for="maintenance_notes">Maintenance Notes</label>
-                            <textarea id="maintenance_notes" name="maintenance_notes" class="form-control" rows="3"><?php echo htmlspecialchars($maintenance_notes); ?></textarea>
+                            <textarea id="maintenance_notes" name="maintenance_notes" class="form-control" rows="3" 
+                                      placeholder="Enter any maintenance notes or special instructions"><?php echo htmlspecialchars($maintenance_notes); ?></textarea>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="last_maintenance_date">Last Maintenance Date</label>
-                                <input type="date" id="last_maintenance_date" name="last_maintenance_date" class="form-control" value="<?php echo htmlspecialchars($last_maintenance_date); ?>">
+                                <input type="date" id="last_maintenance_date" name="last_maintenance_date" class="form-control" 
+                                       value="<?php echo htmlspecialchars($last_maintenance_date); ?>">
                             </div>
 
                             <div class="form-group">
                                 <label for="next_maintenance_date">Next Maintenance Date</label>
-                                <input type="date" id="next_maintenance_date" name="next_maintenance_date" class="form-control" value="<?php echo htmlspecialchars($next_maintenance_date); ?>">
+                                <input type="date" id="next_maintenance_date" name="next_maintenance_date" class="form-control" 
+                                       value="<?php echo htmlspecialchars($next_maintenance_date); ?>">
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-actions">
-                            <button type="button" class="action-btn secondary" onclick="toggleEquipmentForm()">Cancel</button>
-                            <button type="submit" class="action-btn">Add Equipment</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="toggleEquipmentForm()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Add Equipment
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
         
-        <!-- Equipment Stats -->
-        <div class="dashboard-card">
-            <div class="card-header">
-                <h3><i class="fas fa-chart-bar"></i> Equipment Status Overview</h3>
+        <!-- Enhanced Equipment Stats -->
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <h2><i class="fas fa-chart-bar"></i> Equipment Status Overview</h2>
+                    <p>Current status of all gym equipment</p>
+                </div>
             </div>
-            <div class="card-content">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3><?php echo $equipment_stats['available']; ?></h3>
-                            <p>Available</p>
-                        </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+                        <i class="fas fa-check-circle"></i>
                     </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
-                            <i class="fas fa-play-circle"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3><?php echo $equipment_stats['in_use']; ?></h3>
-                            <p>In Use</p>
-                        </div>
+                    <div class="stat-content">
+                        <h3><?php echo $equipment_stats['available']; ?></h3>
+                        <p>Available</p>
                     </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
-                            <i class="fas fa-wrench"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3><?php echo $equipment_stats['maintenance']; ?></h3>
-                            <p>Maintenance</p>
-                        </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><?php echo $equipment_stats['in_use']; ?></h3>
+                        <p>In Use</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                        <i class="fas fa-wrench"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3><?php echo $equipment_stats['maintenance']; ?></h3>
+                        <p>Maintenance</p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Recent Equipment -->
+        <?php if (!empty($recent_equipment)): ?>
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <h2><i class="fas fa-clock"></i> Recently Added Equipment</h2>
+                    <p>Latest equipment additions to the gym</p>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="recent-equipment-table">
+                    <thead>
+                        <tr>
+                            <th>Equipment Name</th>
+                            <th>Type</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Added Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($recent_equipment as $equipment): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($equipment['name']); ?></td>
+                                <td><?php echo htmlspecialchars($equipment['type']); ?></td>
+                                <td><?php echo htmlspecialchars($equipment['location']); ?></td>
+                                <td>
+                                    <span class="equipment-status-badge status-<?php echo htmlspecialchars($equipment['status']); ?>">
+                                        <?php echo htmlspecialchars(str_replace('_', ' ', $equipment['status'])); ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <?php 
+                                    if (!empty($equipment['purchase_date'])) {
+                                        echo date('M d, Y', strtotime($equipment['purchase_date']));
+                                    } else {
+                                        echo 'Not specified';
+                                    }
+                                    ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <?php endif; ?>
         
         <footer class="main-footer">
             <p>&copy; 2025 EliteFit Gym. All rights reserved.</p>
@@ -556,6 +1047,8 @@
             } else {
                 form.classList.add('active');
                 btn.innerHTML = '<i class="fas fa-minus"></i> Cancel';
+                // Scroll to form
+                form.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
         
@@ -564,6 +1057,32 @@
             document.getElementById('equipmentForm').classList.add('active');
             document.querySelector('.toggle-form-btn').innerHTML = '<i class="fas fa-minus"></i> Cancel';
         <?php endif; ?>
+
+        // Enhanced form interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add focus effects to form controls
+            const formControls = document.querySelectorAll('.form-control');
+            formControls.forEach(control => {
+                control.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'translateY(-2px)';
+                });
+                
+                control.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Auto-hide success messages
+            const successAlert = document.querySelector('.alert-success');
+            if (successAlert) {
+                setTimeout(() => {
+                    successAlert.style.opacity = '0';
+                    setTimeout(() => {
+                        successAlert.remove();
+                    }, 300);
+                }, 5000);
+            }
+        });
     </script>
     
     <script src="../scripts/background.js"></script>

@@ -1,4 +1,4 @@
-<?php include '../services/welcome-logic.php'?>
+<!-- <?php include '../services/welcome-logic.php'?> -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -62,6 +62,12 @@
                 <a href="../welcome/my-sessions.php">
                     <i class="fas fa-users"></i>
                     <span>Sessions</span>
+                </a>
+            </li>
+            <li>
+                <a href="../welcome/shop.php">
+                    <i class="fas fa-apple-alt"></i>
+                    <span>Shop</span>
                 </a>
             </li>
             <li>

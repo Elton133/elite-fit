@@ -62,12 +62,12 @@
                     <span>Sessions</span>
                 </a>
             </li> -->
-            <li>
+            <!-- <li>
                 <a href="../settings.php">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </a>
-            </li>
+            </li> -->
         </ul>
     </nav>
     

@@ -74,7 +74,7 @@
                 <p>You have <?php echo $equipment_stats['maintenance']; ?> pieces of equipment currently under maintenance.</p>
             </div>
             <div class="quick-actions">
-                <button class="action-btn"><i class="fas fa-plus"></i> Add Equipment</button>
+                <a href="add-equipment.php" class="action-btn"><i class="fas fa-plus"></i> Add Equipment</a>
                 <a href="schedule-maintenance.php" class="action-btn secondary"><i class="fas fa-tools"></i> Schedule Maintenance</a>
             </div>
         </div>
@@ -122,7 +122,7 @@
                 <div class="dashboard-card">
                     <div class="card-header">
                         <h3><i class="fas fa-tools"></i> Equipment Under Maintenance</h3>
-                        <a href="maintenance-log.php" class="view-all">View All</a>
+                        <a href="equipment-inventory.php" class="view-all">View All</a>
                     </div>
                     <div class="card-content">
                         <?php if (count($maintenance_equipment) > 0): ?>
@@ -156,7 +156,7 @@
             </div>
             
             <div class="dashboard-row">
-                <div class="dashboard-card">
+                <!-- <div class="dashboard-card">
                     <div class="card-header">
                         <h3><i class="fas fa-history"></i> Recent Equipment Usage</h3>
                         <a href="usage-log.php" class="view-all">View All</a>
@@ -189,12 +189,12 @@
                             </div>
                         <?php endif; ?>
                     </div>
-                </div>
+                </div> -->
                 
                 <div class="dashboard-card">
                     <div class="card-header">
                         <h3><i class="fas fa-calendar-alt"></i> Upcoming Maintenance</h3>
-                        <a href="maintenance-schedule.php" class="view-all">View Schedule</a>
+                        <!-- <a href="maintenance-schedule.php" class="view-all">View Schedule</a> -->
                     </div>
                     <div class="card-content">
                         <?php if (count($maintenance_schedule) > 0): ?>

@@ -26,9 +26,10 @@ class EmailVerification {
             $this->mailer->Host       = 'smtp.gmail.com'; // Your SMTP server
             $this->mailer->SMTPAuth   = true;
             $this->mailer->Username   = 'eltonmorden029@gmail.com'; // Your email
-            $this->mailer->Password   = 'kuvgzbgicognutho'; // Your app password
-            $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $this->mailer->Port       = 587;
+            $this->mailer->Password   = 'qbmx havj kmwx wcug'; // Your app password
+     $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+
+            $this->mailer->Port       = 465;
             
             // Set default from address
             $this->mailer->setFrom('eltonmorden029@gmail.com', 'EliteFit Team');
@@ -291,13 +292,13 @@ class EmailVerification {
             // Update user as verified
             $update_user = "UPDATE user_register_details 
                           SET email_verified = 1, email_verified_at = NOW() 
-                          WHERE id = '" . $row['user_id'] . "'";
+                          WHERE table_id = '" . $row['table_id'] . "'";
             mysqli_query($this->conn, $update_user);
             
             return [
                 'success' => true, 
                 'message' => 'Email verified successfully!',
-                'user_id' => $row['user_id'],
+                'table_id' => $row['table_id'],
                 'email' => $row['email']
             ];
             
